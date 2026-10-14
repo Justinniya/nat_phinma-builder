@@ -23,4 +23,7 @@ Pending for Mama Lita.
 - [ ] A Pending report does NOT turn the room Paid
 - [ ] Tested with two boarder accounts: neither can see the other's
       room or payments
+- [ ] Before any real boarder's email or payments go in, "Confirm
+      email" is turned ON in Supabase (otherwise anyone can sign up
+      with a boarder's email and see their payments)
 - [ ] Works on the live URL

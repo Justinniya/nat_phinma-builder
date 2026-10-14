@@ -8,8 +8,9 @@ room as a big, phone-friendly card with its due date, amount and status.
 
 **Status:** todo
 
-- [ ] Sign up, log in and log out work with email and password; email
-      confirmation is left ON in Supabase
+- [ ] Sign up, log in and log out work with email and password (email
+      confirmation is OFF for now while testing; it must be ON before
+      real data, see ticket 05)
 - [ ] Logged-out visitors are sent to the log-in screen
 - [ ] Add / edit room form: label, boarder's first name, boarder's
       email, due day (1–31), monthly amount, note

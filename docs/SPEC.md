@@ -142,11 +142,15 @@ One row per payment, report, deposit or advance.
 Yes, accounts are needed, because both Mama Lita and the boarders log
 in. Use **Supabase Auth with email and password**.
 
-**Email confirmation must stay ON.** A boarder is linked to their room
-by their email, so an unconfirmed sign-up could otherwise claim another
-boarder's email and see their payments. Supabase's free email service
-only sends a few emails per hour, so sign up the demo accounts
-**before** Session 3, not during the demo.
+**Email confirmation: OFF while building, ON before real data.** A
+boarder is linked to their room by their email. With confirmation off,
+anyone could sign up with a boarder's email and see their payments. The
+team has chosen to keep it off while building with made-up test data, so
+they can create accounts quickly. It **must be turned ON before any real
+boarder's email or payments go in**, and before the real-world test
+with Mama Lita. Supabase's free email service only sends a few emails
+per hour, so sign up the demo accounts **before** Session 3, not during
+the demo.
 
 ## Done for the demo
 On the **live Vercel URL**, using two phones:
@@ -165,6 +169,8 @@ On the **live Vercel URL**, using two phones:
       August?" in under 10 seconds.
 - [ ] Logged in as one boarder, you cannot see any other room's data.
 - [ ] Every table has Row Level Security on, with the policies above.
+- [ ] "Confirm email" is ON in Supabase before any real boarder data
+      goes in.
 
 ## Out of scope
 - A separate due record for each month with its own editable amount
