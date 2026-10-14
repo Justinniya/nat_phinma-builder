@@ -5,10 +5,10 @@ can open the live URL on their phone. Every push to `main` updates it.
 
 **Blocked by:** None
 
-**Status:** todo
+**Status:** done
 
-- [ ] The repo is connected to a Vercel project and the latest deploy
+- [x] The repo is connected to a Vercel project and the latest deploy
       succeeded
-- [ ] At least one teammate has opened the live URL on a phone
-- [ ] The live URL is pasted at the top of the README
-- [ ] Works on the live URL
+- [x] At least one teammate has opened the live URL on a phone
+- [x] The live URL is pasted at the top of the README
+- [x] Works on the live URL
