@@ -7,18 +7,18 @@ the connection works and that strangers can't see any rooms.
 
 **Blocked by:** 01
 
-**Status:** todo
+**Status:** done
 
-- [ ] The Supabase URL and publishable (anon) key are set on the
+- [x] The Supabase URL and publishable (anon) key are set on the
       laptop AND in Vercel's environment variables; no `service_role`
       or `sb_secret_` key appears anywhere
-- [ ] The local env file is not committed to git
-- [ ] The `rooms` table is created with the columns in the spec, saved
+- [x] The local env file is not committed to git
+- [x] The `rooms` table is created with the columns in the spec, saved
       as a numbered SQL file in the repo
-- [ ] Row Level Security is ON for `rooms`, with policies: the landlord
+- [x] Row Level Security is ON for `rooms`, with policies: the landlord
       reads/adds/edits/deletes only her own rooms; a boarder may only
       read the room whose `boarder_email` matches their confirmed login
       email; logged-out visitors get nothing
-- [ ] The home page shows "Connected — 0 rooms visible" (or a clear
+- [x] The home page shows "Connected — 0 rooms visible" (or a clear
       error message if the connection fails)
-- [ ] Works on the live URL
+- [x] Works on the live URL
