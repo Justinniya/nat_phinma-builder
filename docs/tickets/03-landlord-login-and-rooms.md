@@ -19,6 +19,8 @@ room as a big, phone-friendly card with its due date, amount and status.
 - [ ] Status is calculated: *Overdue* (red) if the due date has passed,
       *Due soon* (amber) within 5 days of it, otherwise *Upcoming* with
       the date
+- [ ] A room can be vacant (no boarder name or email) and shows
+      *Vacant* on the dashboard
 - [ ] A due day of 29–31 falls back to the last day of shorter months
 - [ ] A second landlord account cannot see Mama Lita's rooms
 - [ ] Works on the live URL
