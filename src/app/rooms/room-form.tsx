@@ -48,7 +48,7 @@ export function RoomForm({
         </div>
       </fieldset>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
           <Label htmlFor="due_day">Due day (1–31)</Label>
           <Input
@@ -83,7 +83,7 @@ export function RoomForm({
       </div>
 
       {error && (
-        <p className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-950 dark:text-red-200">{error}</p>
+        <p className="rounded-[var(--radius)] bg-red-500/15 p-3 text-sm text-red-700 dark:text-red-300">{error}</p>
       )}
 
       <div className="flex gap-3">
