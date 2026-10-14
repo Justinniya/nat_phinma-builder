@@ -55,7 +55,10 @@ There is one landlord and one boarder per room.
    card showing label, first name, due date, amount and a green
    (Paid), amber (Due soon) or red (Overdue) status.
 3. **Mama Lita: Add / edit room**: label, boarder's first name,
-   boarder's email, due day (1–31), monthly amount, and a note.
+   boarder's email, due day (1–31), monthly amount, and a note. A room
+   with no boarder is *Vacant*. The edit screen also has the room's
+   **photos**: add several at once, delete one. The first photo shows
+   on the room's dashboard card. (Added by the team; ticket 07.)
 4. **Mama Lita: Room detail**: the room's info, its full payment
    history with statuses, and **Record payment** and **Edit room**
    buttons.
@@ -127,6 +130,16 @@ One row per payment, report, deposit or advance.
 - **A boarder** may never edit or delete a payment.
 - **Anyone not logged in** can do nothing.
 
+### Storage bucket `room-photos`
+Photo files, private (no public links). Each photo is saved at
+`<landlord id>/<room id>/<file name>`. JPEG, PNG or WebP, up to 5 MB.
+
+**Who may do what:**
+- **The landlord** may view, add and delete photos only for her own
+  rooms.
+- **A boarder** may only **view** photos of their own room.
+- **Anyone not logged in** can do nothing.
+
 ### Calculated, not stored
 - **Due date this period**: the room's `due_day` in the current month.
   If that day doesn't exist (29th–31st), use the last day of the month.
@@ -180,7 +193,8 @@ On the **live Vercel URL**, using two phones:
 - One-time email-link login (the MVP uses email and password)
 - A login for Mama Lita's trusted person or other helpers
 - Boarders editing or deleting a report after sending it
-- Uploading GCash screenshots or other images
+- Uploading GCash screenshots (room photos are in; payment proof images
+  are not)
 - Generating digital receipts
 - Calculating utility bills from sub-meter readings
 - Deposit refunds or damage deductions

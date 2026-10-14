@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { deleteAllRoomPhotos, PHOTO_BUCKET } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
 
 // Add, edit and delete rooms. The database's Row Level Security decides
@@ -53,11 +54,12 @@ export async function createRoom(formData: FormData) {
 
   const supabase = await createClient();
   // landlord_id is filled in by the database with the logged-in user's id.
-  const { error } = await supabase.from("rooms").insert(room);
+  const { data, error } = await supabase.from("rooms").insert(room).select("id").single();
   if (error) redirect(`/rooms/new?error=${encodeURIComponent(error.message)}`);
 
   revalidatePath("/");
-  redirect("/");
+  // Go straight to the new room so photos can be added.
+  redirect(`/rooms/${data.id}/edit?saved=1`);
 }
 
 export async function updateRoom(id: string, formData: FormData) {
@@ -74,9 +76,26 @@ export async function updateRoom(id: string, formData: FormData) {
 
 export async function deleteRoom(id: string) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  // Remove the room's photos first, so no files are left behind.
+  await deleteAllRoomPhotos(supabase, user.id, id);
+
   const { error } = await supabase.from("rooms").delete().eq("id", id);
   if (error) redirect(`/rooms/${id}/edit?error=${encodeURIComponent(error.message)}`);
 
   revalidatePath("/");
   redirect("/");
+}
+
+export async function deleteRoomPhoto(roomId: string, path: string) {
+  const supabase = await createClient();
+  // Storage security rules only let a landlord delete files in her own
+  // folder, so a made-up path can't touch anyone else's photos.
+  const { error } = await supabase.storage.from(PHOTO_BUCKET).remove([path]);
+  if (error) redirect(`/rooms/${roomId}/edit?error=${encodeURIComponent(error.message)}`);
+
+  revalidatePath(`/rooms/${roomId}/edit`);
+  revalidatePath("/");
 }

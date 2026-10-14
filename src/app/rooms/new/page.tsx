@@ -22,6 +22,7 @@ export default async function NewRoomPage({ searchParams }: PageProps<"/rooms/ne
             The due day comes from the boarder&apos;s move-in date. Someone who moved in on the 5th
             pays on the 5th of every month.
           </p>
+          <p className="text-muted-foreground">You can add photos right after saving.</p>
         </div>
         <Card>
           <CardContent className="pt-6">

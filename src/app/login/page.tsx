@@ -1,13 +1,15 @@
+import { Banknote, CalendarDays, NotebookPen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { BoardingHouseIllustration } from "@/components/illustrations";
 import { login, signup } from "./actions";
 
 const highlights = [
-  "See who has paid, who is due soon and who is overdue — on one screen.",
-  "Record cash or GCash payments in a few taps.",
-  "Look up any room's history without flipping through a notebook.",
+  { icon: CalendarDays, text: "See who has paid, who is due soon and who is overdue — on one screen." },
+  { icon: Banknote, text: "Record cash or GCash payments in a few taps." },
+  { icon: NotebookPen, text: "Look up any room's history without flipping through a notebook." },
 ];
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
@@ -26,10 +28,13 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
         <p className="max-w-xl text-lg text-muted-foreground">
           The notebook, the GCash screenshots and the Messenger chats — in one place.
         </p>
+        <BoardingHouseIllustration className="w-full max-w-md" />
         <ul className="hidden max-w-xl flex-col gap-3 sm:flex">
-          {highlights.map((text) => (
-            <li key={text} className="glass flex items-start gap-3 rounded-[var(--radius)] px-4 py-3">
-              <span className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-primary" />
+          {highlights.map(({ icon: Icon, text }) => (
+            <li key={text} className="glass flex items-center gap-3 rounded-[var(--radius)] px-4 py-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                <Icon className="h-5 w-5" aria-hidden />
+              </span>
               <span>{text}</span>
             </li>
           ))}
