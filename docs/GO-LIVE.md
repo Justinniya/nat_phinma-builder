@@ -26,3 +26,22 @@ code. Tick each one as you go.
 - [ ] **Check every table says RLS enabled** in Table Editor.
 - [ ] **Test with two real phones:** a boarder can see only their own
       room, and Mama Lita sees every room.
+
+## Setting up a boarder who didn't get the email
+
+Supabase's free email service sends only a few emails per hour, so a
+boarder's confirmation email may not arrive. Create their account by hand,
+**with the boarder present** (so you know the email is really theirs):
+
+1. Make sure their email is saved on their room in the app.
+2. Supabase → Authentication → Users → **Add user** → Create new user.
+3. Enter **their** email; let **them** type their own password.
+4. Tick **Auto Confirm User** → Create user.
+5. They log in at the live site and see their room.
+
+If it says the email is already registered, delete that half-made user in
+Authentication → Users first, then add it again.
+
+**Better long-term:** connect your own email sender (Supabase →
+Authentication → Emails → SMTP Settings). That's a new service, so agree
+on it as a team first.

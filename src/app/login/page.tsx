@@ -66,6 +66,9 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
           <div className="mb-6 flex flex-col gap-1.5">
             <h2 className="text-xl font-semibold tracking-tight">Welcome back</h2>
             <p className="text-sm text-muted-foreground">Log in, or enter an email and password and choose Sign up.</p>
+            <p className="text-xs text-muted-foreground">
+              Boarder? Sign up with the <span className="font-medium text-foreground">same email your landlord saved</span> for your room.
+            </p>
           </div>
 
           <form className="flex flex-col gap-4">

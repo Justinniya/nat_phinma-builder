@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Notice, PageContainer, PageHeader, RoomStatusBadge, TwoColumn } from "@/components/layout";
 import { PaymentHistory } from "@/components/payment-history";
+import { BoarderInvite } from "@/components/boarder-invite";
 import { RoomSummary } from "@/components/room-summary";
 import { buttonVariants } from "@/components/ui/button";
 import { PAYMENT_COLUMNS, type Payment } from "@/lib/payments";
@@ -76,7 +77,12 @@ export default async function RoomPage({ params, searchParams }: PageProps<"/roo
               emptyText={`No payments yet. Tap “Record payment” when ${room.boarder_first_name ?? "the boarder"} pays.`}
             />
           }
-          side={<RoomSummary room={room} photoUrl={cover?.url} due={due} showEmail showNote />}
+          side={
+            <>
+              <RoomSummary room={room} photoUrl={cover?.url} due={due} showEmail showNote />
+              <BoarderInvite room={room} />
+            </>
+          }
         />
       </PageContainer>
     </LandlordShell>
