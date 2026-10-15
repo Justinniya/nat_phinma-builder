@@ -16,8 +16,12 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
 
   return (
     <main className="grid w-full flex-1 grid-cols-1 lg:grid-cols-2">
-      {/* Left: blue brand panel. On phones it becomes a short header. */}
-      <section className="flex flex-col justify-between gap-8 bg-primary px-6 py-8 text-primary-foreground sm:px-10 lg:px-16 lg:py-12">
+      {/* Left: midnight-blue brand panel. On phones it becomes a short header. */}
+      <section className="relative isolate flex flex-col justify-between gap-8 overflow-hidden bg-brand px-6 py-8 text-brand-foreground sm:px-10 lg:px-16 lg:py-12">
+        {/* Two faint circles for depth — purely decorative. */}
+        <div aria-hidden className="absolute -right-24 -top-24 -z-10 h-80 w-80 rounded-full bg-white/5" />
+        <div aria-hidden className="absolute -bottom-32 -left-20 -z-10 h-96 w-96 rounded-full bg-blue-400/10" />
+
         <div className="flex items-center gap-2.5 font-semibold">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15">
             <House className="h-4 w-4" aria-hidden />
@@ -54,7 +58,9 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
       <section className="flex items-center justify-center bg-card px-6 py-12 sm:px-10">
         <div className="flex w-full max-w-sm flex-col gap-8">
           <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight">Log in to your account</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-brand dark:text-foreground">
+              Log in to your account
+            </h1>
             <p className="text-sm text-muted-foreground">
               New here? Enter your email and a password, then choose Sign up.
             </p>
@@ -87,7 +93,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
             )}
 
             <div className="flex flex-col gap-3">
-              <Button formAction={login} size="lg">
+              <Button formAction={login} size="lg" className="bg-brand text-brand-foreground dark:bg-primary">
                 Log in
               </Button>
               <Button formAction={signup} variant="outline" size="lg">
