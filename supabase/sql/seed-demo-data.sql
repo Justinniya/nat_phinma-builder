@@ -84,6 +84,9 @@ begin
     perform pg_temp.demo_account(boarder || '.boarder@example.com');
   end loop;
 
+  -- Only landlords may create rooms (see 007-security-fixes.sql).
+  insert into landlords (user_id) values (mama_lita), (aling_nena) on conflict do nothing;
+
   -- Only removes rooms this file created before; your own rooms are untouched.
   delete from rooms where note like '[demo]%';
 

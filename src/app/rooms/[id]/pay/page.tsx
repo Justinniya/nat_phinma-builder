@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
-import { formatPesos, isoDate, periodOf, todayInManila, type Room } from "@/lib/rooms";
+import { formatPesos, isoDate, periodOf, ROOM_COLUMNS, todayInManila, type Room } from "@/lib/rooms";
 import { TopBar } from "../../../top-bar";
 import { recordPayment } from "./actions";
 import { PaymentForm } from "@/components/payment-form";
@@ -17,7 +17,7 @@ export default async function RecordPaymentPage({ params, searchParams }: PagePr
 
   const { data: room } = await supabase
     .from("rooms")
-    .select("id, label, boarder_first_name, boarder_email, due_day, monthly_amount, note")
+    .select(ROOM_COLUMNS)
     .eq("id", id)
     .eq("landlord_id", user.id)
     .maybeSingle<Room>();

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { listRoomPhotos, roomFolder } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
-import type { Room } from "@/lib/rooms";
+import { ROOM_COLUMNS, type Room } from "@/lib/rooms";
 import { TopBar } from "../../../top-bar";
 import { deleteRoom, deleteRoomPhoto, updateRoom } from "../../actions";
 import { RoomForm } from "../../room-form";
@@ -20,7 +20,7 @@ export default async function EditRoomPage({ params, searchParams }: PageProps<"
 
   const { data: room } = await supabase
     .from("rooms")
-    .select("id, label, boarder_first_name, boarder_email, due_day, monthly_amount, note")
+    .select(ROOM_COLUMNS)
     .eq("id", id)
     .eq("landlord_id", user.id)
     .maybeSingle<Room>();

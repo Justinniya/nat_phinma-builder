@@ -4,7 +4,7 @@ import { PaymentForm } from "@/components/payment-form";
 import { Card, CardContent } from "@/components/ui/card";
 import { findMyRoom } from "@/lib/my-room";
 import { createClient } from "@/lib/supabase/server";
-import { formatPesos, isoDate, periodOf, todayInManila } from "@/lib/rooms";
+import { confirmedPeriods, formatPesos, isoDate, roomDue, todayInManila } from "@/lib/rooms";
 import { TopBar } from "../top-bar";
 import { reportPayment } from "./actions";
 
@@ -21,6 +21,15 @@ export default async function IPaidPage({ searchParams }: PageProps<"/i-paid">) 
   if (!room) redirect("/");
 
   const today = todayInManila();
+
+  // Pre-select the month that should be paid next — e.g. last month if
+  // it was never confirmed, or next month if this one is already paid.
+  const { data: confirmed } = await supabase
+    .from("payments")
+    .select("type, status, period")
+    .eq("room_id", room.id)
+    .eq("status", "confirmed");
+  const { period } = roomDue(room, today, confirmedPeriods(confirmed ?? []));
 
   return (
     <>
@@ -46,7 +55,7 @@ export default async function IPaidPage({ searchParams }: PageProps<"/i-paid">) 
               cancelHref="/"
               defaultAmount={room.monthly_amount}
               today={isoDate(today)}
-              thisMonth={periodOf(today).slice(0, 7)}
+              thisMonth={period.slice(0, 7)}
               error={typeof error === "string" ? error : undefined}
               monthlyOnly
               submitLabel="Send to landlord"

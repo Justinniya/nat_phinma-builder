@@ -143,13 +143,27 @@ Photo files, private (no public links). Each photo is saved at
 ### Calculated, not stored
 - **Due date this period**: the room's `due_day` in the current month.
   If that day doesn't exist (29th–31st), use the last day of the month.
-- **Room status**: *Paid* if a `confirmed` monthly payment exists for
-  this period; *Overdue* if the due date has passed without one; *Due
-  soon* if it is within 5 days of the due date; otherwise *Upcoming*,
-  showing the due date.
-- **Who is the landlord?** Someone whose login email matches a room's
-  `boarder_email` sees the boarder screens. Everyone else sees the
-  landlord screens.
+- **Room status**: *Overdue* if **last month** was never confirmed paid
+  (only counted if the room already existed by last month's due date,
+  so a newly added room doesn't start overdue); *Paid* if a `confirmed`
+  monthly payment exists for this period; *Overdue* if this month's due
+  date has passed without one; *Due soon* if it is within 5 days of the
+  due date; otherwise *Upcoming*, showing the due date. (Added after
+  /code-review, so an unpaid month no longer disappears on the 1st.)
+- **Who is the landlord?** Accounts on the `landlords` list (added only
+  through the SQL Editor; see `007-security-fixes.sql`). Only landlords
+  can add or edit rooms. Landlords are checked first. Otherwise, someone
+  whose login email matches a room's `boarder_email` sees the boarder
+  screens. Anyone else sees "Your account isn't linked to a room yet".
+
+### `landlords`
+One row per landlord account (`user_id`). A user may only check whether
+they themselves are on it. Nobody can add or remove rows from the app.
+
+### `payments.boarder_email`
+Filled in by the database when a payment is saved: the room's boarder
+email at that moment. A boarder only sees payments with their own email,
+so a new boarder never sees the previous boarder's history.
 
 ## Login
 Yes, accounts are needed, because both Mama Lita and the boarders log

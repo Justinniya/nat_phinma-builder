@@ -7,20 +7,22 @@ import { AddFirstRoomIllustration, RoomIllustration } from "@/components/illustr
 import { coverPhotoUrls } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
 import {
-  dueDateToShow,
+  confirmedPeriods,
   formatDate,
   formatPesos,
   ordinal,
-  periodOf,
-  roomStatus,
+  previousPeriod,
+  roomDue,
+  ROOM_COLUMNS,
   roomStatusStyle as statusStyle,
   todayInManila,
   type Room,
   type RoomStatus,
 } from "@/lib/rooms";
-import { findMyRoom } from "@/lib/my-room";
+import { findMyRoom, isLandlord } from "@/lib/my-room";
 import { PAYMENT_COLUMNS } from "@/lib/payments";
 import { BoarderHome } from "./boarder-home";
+import { NotLinked } from "./not-linked";
 import { ToConfirm, type PendingReport } from "./to-confirm";
 import { TopBar } from "./top-bar";
 
@@ -34,12 +36,15 @@ export default async function Dashboard({ searchParams }: PageProps<"/">) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  // Is this person a boarder? (Their email is saved on a room.) Then they
-  // see their own room instead of the landlord dashboard.
+  // Who is this? Landlords are checked FIRST, so nobody can turn a
+  // landlord into a "boarder" by typing her email on a room.
+  // Then boarders (their email is saved on a room). Anyone else isn't
+  // linked to a room yet.
   const { reported, confirmed, rejected, error: actionError } = await searchParams;
-  const myRoom = await findMyRoom(supabase, user.email);
-  if (myRoom) {
-    return <BoarderHome email={user.email} room={myRoom} reported={Boolean(reported)} />;
+  if (!(await isLandlord(supabase, user.id))) {
+    const myRoom = await findMyRoom(supabase, user.email);
+    if (myRoom) return <BoarderHome email={user.email} room={myRoom} reported={Boolean(reported)} />;
+    return <NotLinked email={user.email} />;
   }
 
   // Boarder reports still waiting for Mama Lita, oldest first.
@@ -54,27 +59,27 @@ export default async function Dashboard({ searchParams }: PageProps<"/">) {
   // Only rooms this landlord owns. (Row Level Security enforces this too.)
   const { data, error } = await supabase
     .from("rooms")
-    .select("id, label, boarder_first_name, boarder_email, due_day, monthly_amount, note")
+    .select(ROOM_COLUMNS)
     .eq("landlord_id", user.id)
     .order("label");
   const rooms = (data as Room[] | null) ?? [];
 
   const today = todayInManila();
 
-  // Which rooms have a CONFIRMED payment for this month? (Pending boarder
-  // reports don't count until Mama Lita confirms them.)
+  // Which months each room has a CONFIRMED payment for — this month and
+  // last month are all the status needs. (Pending boarder reports don't
+  // count until Mama Lita confirms them.)
   const { data: paidRows } = await supabase
     .from("payments")
-    .select("room_id")
+    .select("room_id, type, status, period")
     .eq("landlord_id", user.id)
     .eq("type", "monthly")
     .eq("status", "confirmed")
-    .eq("period", periodOf(today));
-  const paidRoomIds = new Set((paidRows ?? []).map((p) => p.room_id as string));
+    .gte("period", previousPeriod(today));
 
   const roomsWithStatus = rooms.map((room) => {
-    const paid = paidRoomIds.has(room.id);
-    return { room, status: roomStatus(room, today, paid), due: dueDateToShow(room, today, paid) };
+    const paid = confirmedPeriods((paidRows ?? []).filter((p) => p.room_id === room.id));
+    return { room, ...roomDue(room, today, paid) };
   });
   const photos = await coverPhotoUrls(supabase, user.id, rooms.map((r) => r.id));
 

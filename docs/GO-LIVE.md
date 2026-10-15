@@ -1,0 +1,28 @@
+# Before real people use Rent Ledger
+
+Do every step **before Mama Lita or any real boarder enters real data**.
+They are settings in the Supabase dashboard, so they can't be done in
+code. Tick each one as you go.
+
+- [ ] **Turn "Confirm email" ON.**
+      Supabase → Authentication → Sign In / Providers → Email.
+      Boarders are matched to their room by email. With this off, anyone
+      could sign up with a boarder's email and see their payments.
+- [ ] **Set the Site URL to the live app.**
+      Supabase → Authentication → URL Configuration → Site URL:
+      `https://nat-phinma-builder.vercel.app`.
+      Otherwise the confirmation email links to `localhost` and fails.
+- [ ] **Delete the demo accounts.** Their password (`demo1234`) is public
+      in the repo. Run in the SQL Editor:
+      `delete from auth.users where email like '%.demo@example.com' or email like '%.boarder@example.com';`
+      (This also deletes their demo rooms and payments.)
+- [ ] **Check the landlords list.** Supabase → Table Editor → `landlords`.
+      Only real landlords should be there. Anyone else could add rooms.
+- [ ] **Add Mama Lita as a landlord.** After she signs up in the app, run:
+      `insert into landlords (user_id) select id from auth.users where email = 'HER EMAIL';`
+- [ ] **Remove the unused example table**, if `001-example.sql` was ever
+      run (anyone on the internet can read and add to it):
+      `drop table if exists notes;`
+- [ ] **Check every table says RLS enabled** in Table Editor.
+- [ ] **Test with two real phones:** a boarder can see only their own
+      room, and Mama Lita sees every room.

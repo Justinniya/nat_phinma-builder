@@ -9,12 +9,13 @@ import { PAYMENT_COLUMNS, type Payment } from "@/lib/payments";
 import { listRoomPhotos } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
 import {
-  dueDateToShow,
+  confirmedPeriods,
   formatDate,
   formatPesos,
   ordinal,
-  periodOf,
-  roomStatus,
+  formatPeriod,
+  roomDue,
+  ROOM_COLUMNS,
   roomStatusStyle,
   todayInManila,
   type Room,
@@ -34,7 +35,7 @@ export default async function RoomPage({ params, searchParams }: PageProps<"/roo
 
   const { data: room } = await supabase
     .from("rooms")
-    .select("id, label, boarder_first_name, boarder_email, due_day, monthly_amount, note")
+    .select(ROOM_COLUMNS)
     .eq("id", id)
     .eq("landlord_id", user.id)
     .maybeSingle<Room>();
@@ -51,14 +52,8 @@ export default async function RoomPage({ params, searchParams }: PageProps<"/roo
   const [cover] = await listRoomPhotos(supabase, user.id, room.id);
 
   const today = todayInManila();
-  const thisPeriod = periodOf(today);
-  const paidThisMonth = payments.some(
-    (p) => p.type === "monthly" && p.status === "confirmed" && p.period === thisPeriod,
-  );
-  const status = roomStatus(room, today, paidThisMonth);
+  const { status, due, period } = roomDue(room, today, confirmedPeriods(payments));
   const style = roomStatusStyle[status];
-
-  const due = dueDateToShow(room, today, paidThisMonth);
 
   return (
     <>
@@ -116,9 +111,9 @@ export default async function RoomPage({ params, searchParams }: PageProps<"/roo
                   <CalendarDays className="h-4 w-4 text-muted-foreground" aria-hidden />
                   <dt className="sr-only">Due</dt>
                   <dd>
-                    {paidThisMonth ? "Next due " : "Due "}
+                    {status === "paid" ? "Next due " : "Due "}
                     <span className={`font-medium ${style.text}`}>{formatDate(due)}</span>
-                    <span className="text-muted-foreground"> · every {ordinal(room.due_day)}</span>
+                    <span className="text-muted-foreground"> for {formatPeriod(period)} · every {ordinal(room.due_day)}</span>
                   </dd>
                 </div>
                 <div className="flex items-center gap-3">

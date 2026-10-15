@@ -8,7 +8,11 @@ export type Room = {
   due_day: number;
   monthly_amount: number;
   note: string | null;
+  created_at: string;
 };
+
+export const ROOM_COLUMNS =
+  "id, label, boarder_first_name, boarder_email, due_day, monthly_amount, note, created_at";
 
 export type RoomStatus = "vacant" | "paid" | "overdue" | "due_soon" | "upcoming";
 
@@ -64,15 +68,62 @@ export function parseDate(value: string): SimpleDate {
   return { year, month, day };
 }
 
-// paidThisMonth: is there a CONFIRMED monthly payment for this month?
-export function roomStatus(room: Room, today: SimpleDate, paidThisMonth = false): RoomStatus {
-  if (!room.boarder_email) return "vacant";
-  if (paidThisMonth) return "paid";
-  const due = dueDateInMonth(room.due_day, today.year, today.month);
-  const daysLeft = due.day - today.day;
-  if (daysLeft < 0) return "overdue";
-  if (daysLeft <= 5) return "due_soon";
-  return "upcoming";
+function addMonths(date: SimpleDate, months: number): SimpleDate {
+  const index = date.year * 12 + (date.month - 1) + months;
+  return { year: Math.floor(index / 12), month: (index % 12) + 1, day: 1 };
+}
+
+function isOnOrBefore(a: SimpleDate, b: SimpleDate) {
+  return isoDate(a) <= isoDate(b); // "2026-09-05" <= "2026-10-01" compares correctly as text
+}
+
+export type RoomDue = {
+  status: RoomStatus;
+  due: SimpleDate; // the due date that matters right now
+  period: string; // the month that should be paid next, e.g. "2026-10-01"
+};
+
+// Works out where a room stands, from the months that have a CONFIRMED
+// monthly payment (paidPeriods, e.g. {"2026-09-01", "2026-10-01"}).
+//
+// - Last month unpaid -> Overdue, even after the 1st of a new month.
+//   (Only if the room already existed by last month's due date, so a
+//   room added this month doesn't start out overdue.)
+// - This month paid -> Paid, and the date shown is next month's.
+// - Otherwise -> Overdue / Due soon (within 5 days) / Upcoming.
+export function roomDue(room: Room, today: SimpleDate, paidPeriods: Set<string>): RoomDue {
+  const lastMonth = addMonths(today, -1);
+  const nextMonth = addMonths(today, 1);
+  const thisPeriod = periodOf(today);
+  const lastPeriod = periodOf(lastMonth);
+  const thisDue = dueDateInMonth(room.due_day, today.year, today.month);
+  const lastDue = dueDateInMonth(room.due_day, lastMonth.year, lastMonth.month);
+
+  if (!room.boarder_email) return { status: "vacant", due: thisDue, period: thisPeriod };
+
+  const created = parseDate(room.created_at.slice(0, 10));
+  if (isOnOrBefore(created, lastDue) && !paidPeriods.has(lastPeriod)) {
+    return { status: "overdue", due: lastDue, period: lastPeriod };
+  }
+
+  if (paidPeriods.has(thisPeriod)) {
+    return {
+      status: "paid",
+      due: dueDateInMonth(room.due_day, nextMonth.year, nextMonth.month),
+      period: periodOf(nextMonth),
+    };
+  }
+
+  const daysLeft = thisDue.day - today.day;
+  const status = daysLeft < 0 ? "overdue" : daysLeft <= 5 ? "due_soon" : "upcoming";
+  return { status, due: thisDue, period: thisPeriod };
+}
+
+// The months with a confirmed monthly payment, for roomDue().
+export function confirmedPeriods(payments: { type: string; status: string; period: string | null }[]) {
+  return new Set(
+    payments.filter((p) => p.type === "monthly" && p.status === "confirmed" && p.period).map((p) => p.period!),
+  );
 }
 
 export function formatDate(date: SimpleDate) {
@@ -102,10 +153,7 @@ export function ordinal(n: number) {
   return `${n}${({ 1: "st", 2: "nd", 3: "rd" } as Record<number, string>)[n % 10] ?? "th"}`;
 }
 
-// The due date that matters right now: this month's, or — once this
-// month is paid — next month's.
-export function dueDateToShow(room: Room, today: SimpleDate, paidThisMonth: boolean): SimpleDate {
-  if (!paidThisMonth) return dueDateInMonth(room.due_day, today.year, today.month);
-  const next = today.month === 12 ? { year: today.year + 1, month: 1 } : { year: today.year, month: today.month + 1 };
-  return dueDateInMonth(room.due_day, next.year, next.month);
+// Last month, as stored in payments.period: "2026-09-01".
+export function previousPeriod(today: SimpleDate) {
+  return periodOf(addMonths(today, -1));
 }

@@ -9,13 +9,12 @@ import { PAYMENT_COLUMNS, type Payment } from "@/lib/payments";
 import { listRoomPhotos } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
 import {
-  dueDateToShow,
+  confirmedPeriods,
   formatDate,
   formatPeriod,
   formatPesos,
   ordinal,
-  periodOf,
-  roomStatus,
+  roomDue,
   roomStatusStyle,
   todayInManila,
 } from "@/lib/rooms";
@@ -38,14 +37,10 @@ export async function BoarderHome({ email, room, reported }: { email: string | u
   const [cover] = await listRoomPhotos(supabase, room.landlord_id, room.id);
 
   const today = todayInManila();
-  const thisPeriod = periodOf(today);
-  const thisMonth = payments.filter((p) => p.type === "monthly" && p.period === thisPeriod);
-  const paidThisMonth = thisMonth.some((p) => p.status === "confirmed");
-  const waiting = !paidThisMonth && thisMonth.some((p) => p.status === "pending");
-
-  const status = roomStatus(room, today, paidThisMonth);
+  const { status, due, period } = roomDue(room, today, confirmedPeriods(payments));
   const style = roomStatusStyle[status];
-  const due = dueDateToShow(room, today, paidThisMonth);
+  const waiting =
+    status !== "paid" && payments.some((p) => p.type === "monthly" && p.period === period && p.status === "pending");
 
   return (
     <>
@@ -89,9 +84,9 @@ export async function BoarderHome({ email, room, reported }: { email: string | u
                   <CalendarDays className="h-4 w-4 text-muted-foreground" aria-hidden />
                   <dt className="sr-only">Due</dt>
                   <dd>
-                    {paidThisMonth ? "Next due " : "Due "}
+                    {status === "paid" ? "Next due " : "Due "}
                     <span className={`font-medium ${style.text}`}>{formatDate(due)}</span>
-                    <span className="text-muted-foreground"> · every {ordinal(room.due_day)}</span>
+                    <span className="text-muted-foreground"> for {formatPeriod(period)} · every {ordinal(room.due_day)}</span>
                   </dd>
                 </div>
                 <div className="flex items-center gap-3">
@@ -107,11 +102,11 @@ export async function BoarderHome({ email, room, reported }: { email: string | u
               {waiting && (
                 <p className="flex items-center gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">
                   <Clock className="h-4 w-4 shrink-0" aria-hidden />
-                  Your payment for {formatPeriod(thisPeriod)} is waiting for your landlord to confirm.
+                  Your payment for {formatPeriod(period)} is waiting for your landlord to confirm.
                 </p>
               )}
 
-              {!paidThisMonth && (
+              {status !== "paid" && (
                 <Link href="/i-paid" className={buttonVariants({ size: "lg" })}>
                   <Send className="h-4 w-4" aria-hidden />
                   I paid
