@@ -10,7 +10,7 @@ export type Room = {
   note: string | null;
 };
 
-export type RoomStatus = "vacant" | "overdue" | "due_soon" | "upcoming";
+export type RoomStatus = "vacant" | "paid" | "overdue" | "due_soon" | "upcoming";
 
 export type SimpleDate = { year: number; month: number; day: number }; // month is 1–12
 
@@ -38,8 +38,36 @@ export function dueDateInMonth(dueDay: number, year: number, month: number): Sim
   return { year, month, day: Math.min(dueDay, daysInMonth(year, month)) };
 }
 
-export function roomStatus(room: Room, today: SimpleDate): RoomStatus {
+// The month a payment is for, as stored in payments.period: "2026-10-01".
+export function periodOf(date: SimpleDate) {
+  return `${date.year}-${String(date.month).padStart(2, "0")}-01`;
+}
+
+// "2026-10-01" -> "October 2026"
+export function formatPeriod(period: string) {
+  const [year, month] = period.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString("en-PH", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+// SimpleDate -> "2026-10-15", the format the database and date inputs use.
+export function isoDate(date: SimpleDate) {
+  return `${date.year}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}`;
+}
+
+// A date as stored in the database ("2026-10-15") -> SimpleDate.
+export function parseDate(value: string): SimpleDate {
+  const [year, month, day] = value.split("-").map(Number);
+  return { year, month, day };
+}
+
+// paidThisMonth: is there a CONFIRMED monthly payment for this month?
+export function roomStatus(room: Room, today: SimpleDate, paidThisMonth = false): RoomStatus {
   if (!room.boarder_email) return "vacant";
+  if (paidThisMonth) return "paid";
   const due = dueDateInMonth(room.due_day, today.year, today.month);
   const daysLeft = due.day - today.day;
   if (daysLeft < 0) return "overdue";
@@ -57,4 +85,27 @@ export function formatDate(date: SimpleDate) {
 
 export function formatPesos(amount: number) {
   return `₱${Number(amount).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+// How each room status looks. Colours are kept to small dots so the page
+// stays calm and blue stays the main colour.
+export const roomStatusStyle: Record<RoomStatus, { label: string; dot: string; text: string }> = {
+  paid: { label: "Paid", dot: "bg-emerald-500", text: "text-emerald-700 dark:text-emerald-400" },
+  overdue: { label: "Overdue", dot: "bg-red-500", text: "text-red-700 dark:text-red-400" },
+  due_soon: { label: "Due soon", dot: "bg-amber-500", text: "text-amber-700 dark:text-amber-400" },
+  upcoming: { label: "Upcoming", dot: "bg-blue-500", text: "text-blue-700 dark:text-blue-400" },
+  vacant: { label: "Vacant", dot: "bg-slate-400", text: "text-slate-600 dark:text-slate-400" },
+};
+
+export function ordinal(n: number) {
+  if (n >= 11 && n <= 13) return `${n}th`;
+  return `${n}${({ 1: "st", 2: "nd", 3: "rd" } as Record<number, string>)[n % 10] ?? "th"}`;
+}
+
+// The due date that matters right now: this month's, or — once this
+// month is paid — next month's.
+export function dueDateToShow(room: Room, today: SimpleDate, paidThisMonth: boolean): SimpleDate {
+  if (!paidThisMonth) return dueDateInMonth(room.due_day, today.year, today.month);
+  const next = today.month === 12 ? { year: today.year + 1, month: 1 } : { year: today.year, month: today.month + 1 };
+  return dueDateInMonth(room.due_day, next.year, next.month);
 }

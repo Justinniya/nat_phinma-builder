@@ -71,7 +71,7 @@ export async function updateRoom(id: string, formData: FormData) {
   if (error) redirect(`/rooms/${id}/edit?error=${encodeURIComponent(error.message)}`);
 
   revalidatePath("/");
-  redirect("/");
+  redirect(`/rooms/${id}`);
 }
 
 export async function deleteRoom(id: string) {

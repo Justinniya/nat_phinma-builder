@@ -94,7 +94,7 @@ export default async function EditRoomPage({ params, searchParams }: PageProps<"
           <details className="panel rounded-[var(--radius)] p-4">
             <summary className="cursor-pointer text-sm font-medium text-destructive">Delete this room</summary>
             <form action={deleteRoom.bind(null, room.id)} className="mt-4 flex flex-col gap-3">
-              <p className="text-sm text-muted-foreground">This removes {room.label} and its photos for good.</p>
+              <p className="text-sm text-muted-foreground">This removes {room.label}, its photos and its whole payment history for good.</p>
               <Button type="submit" variant="destructive">
                 Yes, delete {room.label}
               </Button>

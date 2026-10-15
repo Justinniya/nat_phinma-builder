@@ -90,7 +90,7 @@ export function RoomForm({
         <Button type="submit" size="lg" className="flex-1">
           {submitLabel}
         </Button>
-        <Link href="/" className={buttonVariants({ variant: "outline", size: "lg" })}>
+        <Link href={room ? `/rooms/${room.id}` : "/"} className={buttonVariants({ variant: "outline", size: "lg" })}>
           Cancel
         </Link>
       </div>
