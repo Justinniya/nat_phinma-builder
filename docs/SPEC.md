@@ -50,10 +50,14 @@ There is one landlord and one boarder per room.
 1. **Log in / Sign up**: email and password. Mama Lita signs up first.
    Boarders sign up with the same email Mama Lita saved on their room,
    and confirm it by email.
-2. **Mama Lita: Dashboard**: a **To confirm** list at the top (each
-   report has Confirm and Reject-with-reason), then every room as a big
-   card showing label, first name, due date, amount and a green
-   (Paid), amber (Due soon) or red (Overdue) status.
+2. **Mama Lita: Dashboard**: an **Overview** of how many rooms are in
+   each status (tap one to see those rooms), the **To confirm** list
+   (each report has Confirm and Reject-with-reason), and **Needs
+   attention**: the overdue and due-soon rooms.
+   **Mama Lita: Rooms** (separate page, so the dashboard isn't crowded):
+   every room as a big card showing photo, label, first name, due date,
+   amount and its Paid / Due soon / Overdue status, with filter tabs
+   per status.
 3. **Mama Lita: Add / edit room**: label, boarder's first name,
    boarder's email, due day (1–31), monthly amount, and a note. A room
    with no boarder is *Vacant*. The edit screen also has the room's
