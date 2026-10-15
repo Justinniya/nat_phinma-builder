@@ -58,6 +58,11 @@ There is one landlord and one boarder per room.
    every room as a big card showing photo, label, first name, due date,
    amount and its Paid / Due soon / Overdue status, with filter tabs
    per status.
+   **Mama Lita: Payments**: every payment across all rooms as a table
+   (date, room, month, method, received by, amount, status), with tabs
+   per status and the total collected this month.
+   All of Mama Lita's screens share a sidebar menu: Dashboard, Rooms,
+   Payments (a top menu bar on phones).
 3. **Mama Lita: Add / edit room**: label, boarder's first name,
    boarder's email, due day (1–31), monthly amount, and a note. A room
    with no boarder is *Vacant*. The edit screen also has the room's

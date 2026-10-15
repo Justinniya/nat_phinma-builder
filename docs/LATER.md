@@ -16,8 +16,6 @@ stays small enough to actually ship by Session 3.
 - **Fixed messages instead of URL text**: error and success messages
   are read from the web address, so someone could send a link that shows
   a fake notice on the real site. Use short codes mapped to fixed text.
-- **Limit "I paid" reports**: allow only one pending report per room
-  per month, so the To confirm list can't be flooded.
 - **Clear "nothing changed" errors**: when the database blocks a change,
   the app still says it worked. Treat "0 rows changed" as an error.
 - **Tidy up**: remove the unused login illustration, the empty
