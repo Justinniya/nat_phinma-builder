@@ -82,12 +82,13 @@ There is one landlord and one boarder per room.
    by default, or GCash), received by ("Mama Lita" by default), and a
    reference number if GCash. It saves as Pending. **One report per
    month:** a room can have at most one pending or confirmed monthly
-   payment per month (database rule, 008). Every confirmed payment has a
-   **Payment confirmation** page (not a BIR official receipt) that the
-   boarder can screenshot as proof.
-   While one is waiting, the
+   payment per month (database rule, 008). While one is waiting, the
    I paid button is hidden. A rejected report doesn't count, so the
    boarder can send a corrected one.
+8. **Payment confirmation**: every confirmed payment has a page showing
+   amount, month, room, boarder, method, received by and "Confirmed by"
+   the landlord, which the boarder can screenshot as proof. Labelled as
+   not a BIR official receipt.
 
 ## Data
 
