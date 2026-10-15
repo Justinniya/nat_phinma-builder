@@ -9,12 +9,12 @@ import { PAYMENT_COLUMNS, type Payment } from "@/lib/payments";
 import { listRoomPhotos } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
 import { confirmedPeriods, formatPeriod, roomDue, todayInManila } from "@/lib/rooms";
-import { TopBar } from "./top-bar";
+import { BoarderShell } from "./boarder-shell";
 
 // What a boarder sees after logging in: only their own room.
 // Same layout as Mama Lita's room screen: history left, room details right.
 
-export async function BoarderHome({ email, room, reported }: { email: string | undefined; room: BoarderRoom; reported: boolean }) {
+export async function BoarderHome({ room, reported }: { room: BoarderRoom; reported: boolean }) {
   const supabase = await createClient();
 
   // Row Level Security only returns this boarder's own payments.
@@ -34,8 +34,7 @@ export async function BoarderHome({ email, room, reported }: { email: string | u
     payments.some((p) => p.type === "monthly" && p.period === due.period && p.status === "pending");
 
   return (
-    <>
-      <TopBar email={email} />
+    <BoarderShell room={room} active="room">
       <PageContainer>
         <PageHeader
           title={`Hi${room.boarder_first_name ? `, ${room.boarder_first_name}` : ""}`}
@@ -74,6 +73,6 @@ export async function BoarderHome({ email, room, reported }: { email: string | u
           side={<RoomSummary room={room} photoUrl={cover?.url} due={due} />}
         />
       </PageContainer>
-    </>
+    </BoarderShell>
   );
 }

@@ -34,7 +34,7 @@ export default async function Dashboard({ searchParams }: PageProps<"/">) {
   const { reported, confirmed, rejected, error: actionError } = await searchParams;
   if (!(await isLandlord(supabase, user.id))) {
     const myRoom = await findMyRoom(supabase, user.email);
-    if (myRoom) return <BoarderHome email={user.email} room={myRoom} reported={Boolean(reported)} />;
+    if (myRoom) return <BoarderHome room={myRoom} reported={Boolean(reported)} />;
     return <NotLinked email={user.email} />;
   }
 
@@ -57,7 +57,7 @@ export default async function Dashboard({ searchParams }: PageProps<"/">) {
     );
 
   return (
-    <LandlordShell email={user.email} active="dashboard">
+    <LandlordShell userId={user.id} email={user.email} active="dashboard">
       <PageContainer>
         <PageHeader
           title="Dashboard"

@@ -20,7 +20,7 @@ export default async function NewRoomPage({ searchParams }: PageProps<"/rooms/ne
   const { error } = await searchParams;
 
   return (
-    <LandlordShell email={user.email} active="rooms">
+    <LandlordShell userId={user.id} email={user.email} active="rooms">
       <PageContainer>
         <PageHeader back={{ href: "/rooms", label: "Rooms" }} title="Add a room" />
         <TwoColumn

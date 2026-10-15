@@ -48,7 +48,7 @@ export default async function PaymentsPage({ searchParams }: PageProps<"/payment
   ];
 
   return (
-    <LandlordShell email={user.email} active="payments">
+    <LandlordShell userId={user.id} email={user.email} active="payments">
       <PageContainer>
         <PageHeader
           title="Payments"

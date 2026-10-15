@@ -37,7 +37,7 @@ export default async function RoomsPage({ searchParams }: PageProps<"/rooms">) {
   ];
 
   return (
-    <LandlordShell email={user.email} active="rooms">
+    <LandlordShell userId={user.id} email={user.email} active="rooms">
       <PageContainer>
         <PageHeader
           title="Rooms"

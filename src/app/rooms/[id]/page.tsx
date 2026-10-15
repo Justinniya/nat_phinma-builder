@@ -42,7 +42,7 @@ export default async function RoomPage({ params, searchParams }: PageProps<"/roo
   const due = roomDue(room, todayInManila(), confirmedPeriods(payments));
 
   return (
-    <LandlordShell email={user.email} active="rooms">
+    <LandlordShell userId={user.id} email={user.email} active="rooms">
       <PageContainer>
         <PageHeader
           back={{ href: "/rooms", label: "Rooms" }}

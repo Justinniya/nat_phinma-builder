@@ -7,7 +7,7 @@ import { findMyRoom } from "@/lib/my-room";
 import { listRoomPhotos } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
 import { confirmedPeriods, isoDate, roomDue, todayInManila } from "@/lib/rooms";
-import { TopBar } from "../top-bar";
+import { BoarderShell } from "../boarder-shell";
 import { reportPayment } from "./actions";
 
 // Boarder: "I paid" form.
@@ -35,8 +35,7 @@ export default async function IPaidPage({ searchParams }: PageProps<"/i-paid">) 
   const [cover] = await listRoomPhotos(supabase, room.landlord_id, room.id);
 
   return (
-    <>
-      <TopBar email={user.email} />
+    <BoarderShell room={room} active="i-paid">
       <PageContainer>
         <PageHeader
           back={{ href: "/", label: "My room" }}
@@ -63,6 +62,6 @@ export default async function IPaidPage({ searchParams }: PageProps<"/i-paid">) 
           side={<RoomSummary room={room} photoUrl={cover?.url} due={due} />}
         />
       </PageContainer>
-    </>
+    </BoarderShell>
   );
 }

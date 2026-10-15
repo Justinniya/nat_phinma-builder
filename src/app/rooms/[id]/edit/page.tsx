@@ -32,7 +32,7 @@ export default async function EditRoomPage({ params, searchParams }: PageProps<"
   const photos = await listRoomPhotos(supabase, user.id, room.id);
 
   return (
-    <LandlordShell email={user.email} active="rooms">
+    <LandlordShell userId={user.id} email={user.email} active="rooms">
       <PageContainer>
         <PageHeader
           back={{ href: `/rooms/${room.id}`, label: room.label }}
