@@ -18,9 +18,8 @@ stays small enough to actually ship by Session 3.
   a fake notice on the real site. Use short codes mapped to fixed text.
 - **Clear "nothing changed" errors**: when the database blocks a change,
   the app still says it worked. Treat "0 rows changed" as an error.
-- **Tidy up**: remove the unused login illustration, the empty
-  `public/images/` folder (unless a hero photo is added) and
-  `supabase/sql/001-example.sql`.
+- **Tidy up**: remove `supabase/sql/001-example.sql` (the unused
+  illustration and empty images folder are already gone).
 
 ## Cut from the spec (/to-spec)
 

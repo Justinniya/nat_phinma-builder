@@ -80,7 +80,11 @@ There is one landlord and one boarder per room.
    reason.
 7. **Boarder: I paid**: amount (pre-filled), date (today), method (Cash
    by default, or GCash), received by ("Mama Lita" by default), and a
-   reference number if GCash. It saves as Pending.
+   reference number if GCash. It saves as Pending. **One report per
+   month:** a room can have at most one pending or confirmed monthly
+   payment per month (database rule, 008). While one is waiting, the
+   I paid button is hidden. A rejected report doesn't count, so the
+   boarder can send a corrected one.
 
 ## Data
 
