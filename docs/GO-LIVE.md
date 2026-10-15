@@ -20,7 +20,7 @@ code. Tick each one as you go.
       Only real landlords should be there. Anyone else could add rooms.
 - [ ] **Add Mama Lita as a landlord.** After she signs up in the app, run:
       `insert into landlords (user_id) select id from auth.users where email = 'HER EMAIL';`
-- [ ] **Remove the unused example table**, if `001-example.sql` was ever
+- [x] **Remove the unused example table**, if `001-example.sql` was ever
       run (anyone on the internet can read and add to it):
       `drop table if exists notes;`
 - [ ] **Check every table says RLS enabled** in Table Editor.
