@@ -19,7 +19,9 @@ import {
   type RoomStatus,
 } from "@/lib/rooms";
 import { findMyRoom } from "@/lib/my-room";
+import { PAYMENT_COLUMNS } from "@/lib/payments";
 import { BoarderHome } from "./boarder-home";
+import { ToConfirm, type PendingReport } from "./to-confirm";
 import { TopBar } from "./top-bar";
 
 // Mama Lita's dashboard: every room as a card, with its photo, who rents
@@ -34,11 +36,20 @@ export default async function Dashboard({ searchParams }: PageProps<"/">) {
 
   // Is this person a boarder? (Their email is saved on a room.) Then they
   // see their own room instead of the landlord dashboard.
+  const { reported, confirmed, rejected, error: actionError } = await searchParams;
   const myRoom = await findMyRoom(supabase, user.email);
   if (myRoom) {
-    const { reported } = await searchParams;
     return <BoarderHome email={user.email} room={myRoom} reported={Boolean(reported)} />;
   }
+
+  // Boarder reports still waiting for Mama Lita, oldest first.
+  const { data: pendingRows } = await supabase
+    .from("payments")
+    .select(`${PAYMENT_COLUMNS}, rooms(label, boarder_first_name)`)
+    .eq("landlord_id", user.id)
+    .eq("status", "pending")
+    .order("created_at");
+  const pending = (pendingRows as PendingReport[] | null) ?? [];
 
   // Only rooms this landlord owns. (Row Level Security enforces this too.)
   const { data, error } = await supabase
@@ -85,6 +96,24 @@ export default async function Dashboard({ searchParams }: PageProps<"/">) {
             Add room
           </Link>
         </div>
+
+        {confirmed && (
+          <p className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300">
+            Payment confirmed.
+          </p>
+        )}
+        {rejected && (
+          <p className="rounded-lg border border-border bg-secondary p-3 text-sm">
+            Report rejected. The boarder will see your reason.
+          </p>
+        )}
+        {typeof actionError === "string" && (
+          <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">
+            {actionError}
+          </p>
+        )}
+
+        <ToConfirm reports={pending} />
 
         {/* How many rooms are in each state, at a glance. */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
