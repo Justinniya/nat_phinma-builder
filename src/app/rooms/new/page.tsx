@@ -1,9 +1,16 @@
 import { redirect } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card";
+import { PageContainer, PageHeader, TwoColumn } from "@/components/layout";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { TopBar } from "../../top-bar";
 import { createRoom } from "../actions";
 import { RoomForm } from "../room-form";
+
+const tips = [
+  "The due day comes from the boarder's move-in date. Moved in on the 5th? They pay on the 5th of every month.",
+  "Use the boarder's real email. They sign up with it to see their own room.",
+  "You can add photos right after saving.",
+];
 
 export default async function NewRoomPage({ searchParams }: PageProps<"/rooms/new">) {
   const supabase = await createClient();
@@ -15,25 +22,32 @@ export default async function NewRoomPage({ searchParams }: PageProps<"/rooms/ne
   return (
     <>
       <TopBar email={user.email} />
-      <main className="grid w-full flex-1 grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[1fr_2fr] lg:gap-10 lg:px-10">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-semibold tracking-tight">Add a room</h1>
-          <p className="text-muted-foreground">
-            The due day comes from the boarder&apos;s move-in date. Someone who moved in on the 5th
-            pays on the 5th of every month.
-          </p>
-          <p className="text-muted-foreground">You can add photos right after saving.</p>
-        </div>
-        <Card>
-          <CardContent className="pt-6">
-            <RoomForm
-              action={createRoom}
-              error={typeof error === "string" ? error : undefined}
-              submitLabel="Save room"
-            />
-          </CardContent>
-        </Card>
-      </main>
+      <PageContainer>
+        <PageHeader back={{ href: "/", label: "Dashboard" }} title="Add a room" />
+        <TwoColumn
+          main={
+            <Card>
+              <CardContent className="pt-6">
+                <RoomForm action={createRoom} error={typeof error === "string" ? error : undefined} submitLabel="Save room" />
+              </CardContent>
+            </Card>
+          }
+          side={
+            <Card>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base">Good to know</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="flex list-disc flex-col gap-3 pl-4 text-sm text-muted-foreground">
+                  {tips.map((tip) => (
+                    <li key={tip}>{tip}</li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          }
+        />
+      </PageContainer>
     </>
   );
 }

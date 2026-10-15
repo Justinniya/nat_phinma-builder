@@ -1,11 +1,13 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { PageContainer, PageHeader, TwoColumn } from "@/components/layout";
+import { PaymentForm } from "@/components/payment-form";
+import { RoomSummary } from "@/components/room-summary";
 import { Card, CardContent } from "@/components/ui/card";
+import { listRoomPhotos } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
-import { formatPesos, isoDate, periodOf, ROOM_COLUMNS, todayInManila, type Room } from "@/lib/rooms";
+import { confirmedPeriods, isoDate, roomDue, ROOM_COLUMNS, todayInManila, type Room } from "@/lib/rooms";
 import { TopBar } from "../../../top-bar";
 import { recordPayment } from "./actions";
-import { PaymentForm } from "@/components/payment-form";
 
 export default async function RecordPaymentPage({ params, searchParams }: PageProps<"/rooms/[id]/pay">) {
   const { id } = await params;
@@ -23,41 +25,43 @@ export default async function RecordPaymentPage({ params, searchParams }: PagePr
     .maybeSingle<Room>();
   if (!room) notFound();
 
+  // Pre-select the month that should be paid next.
+  const { data: confirmed } = await supabase
+    .from("payments")
+    .select("type, status, period")
+    .eq("room_id", room.id)
+    .eq("status", "confirmed");
   const today = todayInManila();
+  const due = roomDue(room, today, confirmedPeriods(confirmed ?? []));
+  const [cover] = await listRoomPhotos(supabase, user.id, room.id);
 
   return (
     <>
       <TopBar email={user.email} />
-      <main className="grid w-full flex-1 grid-cols-1 gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_2fr] lg:gap-10 lg:px-10">
-        <div className="flex flex-col gap-2">
-          <Link href={`/rooms/${room.id}`} className="text-sm text-primary hover:underline">
-            ← {room.label}
-          </Link>
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Record a payment</h1>
-          <p className="text-muted-foreground">
-            {room.label}
-            {room.boarder_first_name ? ` · ${room.boarder_first_name}` : ""} · {formatPesos(room.monthly_amount)} a
-            month
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Payments you record yourself count straight away. Deposits and advances are kept on record but don&apos;t
-            mark a month as paid.
-          </p>
-        </div>
-
-        <Card className="h-fit">
-          <CardContent className="pt-6">
-            <PaymentForm
-              action={recordPayment.bind(null, room.id)}
-              cancelHref={`/rooms/${room.id}`}
-              defaultAmount={room.monthly_amount}
-              today={isoDate(today)}
-              thisMonth={periodOf(today).slice(0, 7)}
-              error={typeof error === "string" ? error : undefined}
-            />
-          </CardContent>
-        </Card>
-      </main>
+      <PageContainer>
+        <PageHeader
+          back={{ href: `/rooms/${room.id}`, label: room.label }}
+          title="Record a payment"
+          description="Payments you record yourself count straight away. Deposits and advances are kept on record but don't mark a month as paid."
+        />
+        <TwoColumn
+          main={
+            <Card>
+              <CardContent className="pt-6">
+                <PaymentForm
+                  action={recordPayment.bind(null, room.id)}
+                  cancelHref={`/rooms/${room.id}`}
+                  defaultAmount={room.monthly_amount}
+                  today={isoDate(today)}
+                  thisMonth={due.period.slice(0, 7)}
+                  error={typeof error === "string" ? error : undefined}
+                />
+              </CardContent>
+            </Card>
+          }
+          side={<RoomSummary room={room} photoUrl={cover?.url} due={due} />}
+        />
+      </PageContainer>
     </>
   );
 }

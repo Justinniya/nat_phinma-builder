@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Notice } from "@/components/layout";
 import { methodLabel, typeLabel, type PaymentMethod, type PaymentType } from "@/lib/payments";
 
 // "use client" because the form changes as you tap: the month picker only
@@ -129,19 +130,13 @@ export function PaymentForm({
         <Input id="received_by" name="received_by" defaultValue="Mama Lita" />
       </div>
 
-      {error && (
-        <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">
-          {error}
-        </p>
-      )}
+      {error && <Notice tone="error">{error}</Notice>}
 
-      <div className="flex gap-3">
-        <Button type="submit" size="lg" className="flex-1">
-          {submitLabel}
-        </Button>
-        <Link href={cancelHref} className={buttonVariants({ variant: "outline", size: "lg" })}>
+      <div className="flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:justify-end">
+        <Link href={cancelHref} className={buttonVariants({ variant: "outline" })}>
           Cancel
         </Link>
+        <Button type="submit">{submitLabel}</Button>
       </div>
     </form>
   );

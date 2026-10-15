@@ -1,10 +1,12 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
+import { PageContainer, PageHeader, TwoColumn } from "@/components/layout";
 import { PaymentForm } from "@/components/payment-form";
+import { RoomSummary } from "@/components/room-summary";
 import { Card, CardContent } from "@/components/ui/card";
 import { findMyRoom } from "@/lib/my-room";
+import { listRoomPhotos } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
-import { confirmedPeriods, formatPesos, isoDate, roomDue, todayInManila } from "@/lib/rooms";
+import { confirmedPeriods, isoDate, roomDue, todayInManila } from "@/lib/rooms";
 import { TopBar } from "../top-bar";
 import { reportPayment } from "./actions";
 
@@ -29,40 +31,38 @@ export default async function IPaidPage({ searchParams }: PageProps<"/i-paid">) 
     .select("type, status, period")
     .eq("room_id", room.id)
     .eq("status", "confirmed");
-  const { period } = roomDue(room, today, confirmedPeriods(confirmed ?? []));
+  const due = roomDue(room, today, confirmedPeriods(confirmed ?? []));
+  const [cover] = await listRoomPhotos(supabase, room.landlord_id, room.id);
 
   return (
     <>
       <TopBar email={user.email} />
-      <main className="grid w-full flex-1 grid-cols-1 gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_2fr] lg:gap-10 lg:px-10">
-        <div className="flex flex-col gap-2">
-          <Link href="/" className="text-sm text-primary hover:underline">
-            ← My room
-          </Link>
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">I paid</h1>
-          <p className="text-muted-foreground">
-            {room.label} · {formatPesos(room.monthly_amount)} a month
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Your landlord will confirm it once the money is with them. Until then it shows as Pending.
-          </p>
-        </div>
-
-        <Card className="h-fit">
-          <CardContent className="pt-6">
-            <PaymentForm
-              action={reportPayment}
-              cancelHref="/"
-              defaultAmount={room.monthly_amount}
-              today={isoDate(today)}
-              thisMonth={period.slice(0, 7)}
-              error={typeof error === "string" ? error : undefined}
-              monthlyOnly
-              submitLabel="Send to landlord"
-            />
-          </CardContent>
-        </Card>
-      </main>
+      <PageContainer>
+        <PageHeader
+          back={{ href: "/", label: "My room" }}
+          title="I paid"
+          description="Your landlord will confirm it once the money is with them. Until then it shows as Pending."
+        />
+        <TwoColumn
+          main={
+            <Card>
+              <CardContent className="pt-6">
+                <PaymentForm
+                  action={reportPayment}
+                  cancelHref="/"
+                  defaultAmount={room.monthly_amount}
+                  today={isoDate(today)}
+                  thisMonth={due.period.slice(0, 7)}
+                  error={typeof error === "string" ? error : undefined}
+                  monthlyOnly
+                  submitLabel="Send to landlord"
+                />
+              </CardContent>
+            </Card>
+          }
+          side={<RoomSummary room={room} photoUrl={cover?.url} due={due} />}
+        />
+      </PageContainer>
     </>
   );
 }

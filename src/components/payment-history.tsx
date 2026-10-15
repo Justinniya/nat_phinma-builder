@@ -2,7 +2,8 @@ import { Trash2 } from "lucide-react";
 import { deletePayment } from "@/app/rooms/[id]/pay/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { methodLabel, statusLabel, typeLabel, type Payment } from "@/lib/payments";
+import { PaymentStatusBadge } from "@/components/layout";
+import { methodLabel, typeLabel, type Payment } from "@/lib/payments";
 import { formatDate, formatPeriod, formatPesos, parseDate } from "@/lib/rooms";
 
 // A room's payments, newest first. Shown to Mama Lita (with a remove
@@ -48,10 +49,7 @@ export function PaymentHistory({
                 </div>
                 <div className="flex items-center gap-3 sm:justify-end">
                   <span className="font-semibold tabular-nums">{formatPesos(p.amount)}</span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-0.5 text-xs font-medium">
-                    <span className={`h-1.5 w-1.5 rounded-full ${statusLabel[p.status].dot}`} />
-                    {statusLabel[p.status].label}
-                  </span>
+                  <PaymentStatusBadge status={p.status} />
                   {removableForRoomId && (
                     // Remove a mistake. Hidden behind a second tap.
                     <details className="relative">

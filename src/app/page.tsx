@@ -1,9 +1,10 @@
-import { CalendarDays, Plus, User } from "lucide-react";
+import { Plus, User } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { AddFirstRoomIllustration, RoomIllustration } from "@/components/illustrations";
+import { Notice, PageContainer, PageHeader, RoomStatusBadge, Section } from "@/components/layout";
 import { coverPhotoUrls } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -26,8 +27,10 @@ import { NotLinked } from "./not-linked";
 import { ToConfirm, type PendingReport } from "./to-confirm";
 import { TopBar } from "./top-bar";
 
-// Mama Lita's dashboard: every room as a card, with its photo, who rents
-// it, when it's due and whether it's paid or overdue.
+// Mama Lita's dashboard, in three sections:
+//   Overview   — how many rooms are paid, due soon, overdue…
+//   To confirm — boarder reports waiting for her
+//   Rooms      — every room as a card
 
 const statusOrder: RoomStatus[] = ["overdue", "due_soon", "upcoming", "paid", "vacant"];
 
@@ -57,12 +60,11 @@ export default async function Dashboard({ searchParams }: PageProps<"/">) {
   const pending = (pendingRows as PendingReport[] | null) ?? [];
 
   // Only rooms this landlord owns. (Row Level Security enforces this too.)
-  const { data, error } = await supabase
-    .from("rooms")
-    .select(ROOM_COLUMNS)
-    .eq("landlord_id", user.id)
-    .order("label");
-  const rooms = (data as Room[] | null) ?? [];
+  const { data, error } = await supabase.from("rooms").select(ROOM_COLUMNS).eq("landlord_id", user.id);
+  // Sort the way people count: Room 1, Room 2 … Room 10 (not Room 1, Room 10, Room 2).
+  const rooms = ((data as Room[] | null) ?? []).sort((a, b) =>
+    a.label.localeCompare(b.label, undefined, { numeric: true }),
+  );
 
   const today = todayInManila();
 
@@ -86,114 +88,104 @@ export default async function Dashboard({ searchParams }: PageProps<"/">) {
   return (
     <>
       <TopBar email={user.email} />
+      <PageContainer>
+        <PageHeader
+          title="Dashboard"
+          description={`Today is ${formatDate(today)} · ${rooms.length} ${rooms.length === 1 ? "room" : "rooms"}`}
+          actions={
+            <Link href="/rooms/new" className={buttonVariants()}>
+              <Plus className="h-4 w-4" aria-hidden />
+              Add room
+            </Link>
+          }
+        />
 
-      <main className="flex w-full flex-1 flex-col gap-8 px-4 py-8 sm:px-6 lg:px-10">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Rooms</h1>
-            <p className="flex items-center gap-2 text-sm text-muted-foreground">
-              <CalendarDays className="h-4 w-4" aria-hidden />
-              Today is {formatDate(today)} · {rooms.length} {rooms.length === 1 ? "room" : "rooms"}
-            </p>
+        {confirmed && <Notice tone="success">Payment confirmed.</Notice>}
+        {rejected && <Notice tone="info">Report rejected. The boarder will see your reason.</Notice>}
+        {typeof actionError === "string" && <Notice tone="error">{actionError}</Notice>}
+        {error && <Notice tone="error">Could not load rooms: {error.message}</Notice>}
+
+        <Section title="Overview">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {statusOrder.map((status) => (
+              <div key={status} className="panel flex flex-col gap-2 rounded-[var(--radius)] p-5">
+                <span className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                  <span className={`h-2 w-2 rounded-full ${statusStyle[status].dot}`} />
+                  {statusStyle[status].label}
+                </span>
+                <span className="text-3xl font-semibold tabular-nums tracking-tight">
+                  {roomsWithStatus.filter((r) => r.status === status).length}
+                </span>
+              </div>
+            ))}
           </div>
-          <Link href="/rooms/new" className={buttonVariants()}>
-            <Plus className="h-4 w-4" aria-hidden />
-            Add room
-          </Link>
-        </div>
+        </Section>
 
-        {confirmed && (
-          <p className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300">
-            Payment confirmed.
-          </p>
-        )}
-        {rejected && (
-          <p className="rounded-lg border border-border bg-secondary p-3 text-sm">
-            Report rejected. The boarder will see your reason.
-          </p>
-        )}
-        {typeof actionError === "string" && (
-          <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">
-            {actionError}
-          </p>
-        )}
-
-        <ToConfirm reports={pending} />
-
-        {/* How many rooms are in each state, at a glance. */}
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-          {statusOrder.map((status) => (
-            <div key={status} className="panel flex flex-col gap-2 rounded-[var(--radius)] p-5">
-              <span className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                <span className={`h-2 w-2 rounded-full ${statusStyle[status].dot}`} />
-                {statusStyle[status].label}
+        <Section
+          title="To confirm"
+          description="Payments boarders reported. Confirm once the money is with you."
+          aside={
+            pending.length > 0 && (
+              <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
+                {pending.length} waiting
               </span>
-              <span className="text-3xl font-semibold tabular-nums tracking-tight">
-                {roomsWithStatus.filter((r) => r.status === status).length}
-              </span>
+            )
+          }
+        >
+          <ToConfirm reports={pending} />
+        </Section>
+
+        <Section title="Rooms" description="Tap a room to see its payments or record one.">
+          {!error && rooms.length === 0 ? (
+            <div className="panel flex flex-col items-center gap-3 rounded-[var(--radius)] px-6 py-14 text-center">
+              <AddFirstRoomIllustration className="h-28 w-auto" />
+              <p className="font-semibold">No rooms yet</p>
+              <p className="text-sm text-muted-foreground">Add your first room to start tracking rent.</p>
             </div>
-          ))}
-        </div>
-
-        {error && (
-          <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">
-            Could not load rooms: {error.message}
-          </p>
-        )}
-
-        {!error && rooms.length === 0 && (
-          <div className="panel flex flex-col items-center gap-3 rounded-[var(--radius)] px-6 py-14 text-center">
-            <AddFirstRoomIllustration className="h-28 w-auto" />
-            <p className="font-semibold">No rooms yet</p>
-            <p className="text-sm text-muted-foreground">Add your first room to start tracking rent.</p>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-          {roomsWithStatus.map(({ room, status, due }) => {
-            const style = statusStyle[status];
-            const photo = photos[room.id];
-            return (
-              <Link key={room.id} href={`/rooms/${room.id}`} className="group block">
-                <Card className="h-full overflow-hidden transition-shadow duration-200 group-hover:shadow-md group-hover:ring-1 group-hover:ring-primary/30">
-                  {/* Photo, or an illustration if there's none yet */}
-                  <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-border bg-secondary">
-                    {photo ? (
-                      // eslint-disable-next-line @next/next/no-img-element -- private, short-lived photo links
-                      <img src={photo} alt={`Photo of ${room.label}`} className="h-full w-full object-cover" />
-                    ) : (
-                      <RoomIllustration className="h-full w-full" />
-                    )}
-                    <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-xs font-medium text-slate-700 shadow-sm ring-1 ring-black/5 dark:bg-slate-900/90 dark:text-slate-200 dark:ring-white/10">
-                      <span className={`h-1.5 w-1.5 rounded-full ${style.dot}`} />
-                      {style.label}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-col gap-4 p-5">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex flex-col gap-1">
-                        <h2 className="font-semibold tracking-tight">{room.label}</h2>
-                        <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                          <User className="h-3.5 w-3.5" aria-hidden />
-                          {room.boarder_first_name ?? "No boarder"}
-                        </p>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {roomsWithStatus.map(({ room, status, due }) => {
+                const photo = photos[room.id];
+                return (
+                  <Link key={room.id} href={`/rooms/${room.id}`} className="group block">
+                    <Card className="flex h-full flex-col overflow-hidden transition-shadow duration-200 group-hover:shadow-md group-hover:ring-1 group-hover:ring-primary/30">
+                      {/* Photo, or an illustration if there's none yet */}
+                      <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-border bg-secondary">
+                        {photo ? (
+                          // eslint-disable-next-line @next/next/no-img-element -- private, short-lived photo links
+                          <img src={photo} alt={`Photo of ${room.label}`} className="h-full w-full object-cover" />
+                        ) : (
+                          <RoomIllustration className="h-full w-full" />
+                        )}
+                        <RoomStatusBadge status={status} className="absolute left-3 top-3 shadow-sm" />
                       </div>
-                      <span className="font-semibold tabular-nums">{formatPesos(room.monthly_amount)}</span>
-                    </div>
-                    <div className="flex items-center justify-between border-t border-border pt-4 text-sm">
-                      <span className="text-muted-foreground">Due every {ordinal(room.due_day)}</span>
-                      <span className={`font-medium ${style.text}`}>
-                        {status === "paid" ? `Next: ${formatDate(due)}` : formatDate(due)}
-                      </span>
-                    </div>
-                  </div>
-                </Card>
-              </Link>
-            );
-          })}
-        </div>
-      </main>
+
+                      <div className="flex flex-1 flex-col gap-4 p-5">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex min-w-0 flex-col gap-1">
+                            <h3 className="truncate font-semibold tracking-tight">{room.label}</h3>
+                            <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                              <User className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                              <span className="truncate">{room.boarder_first_name ?? "No boarder"}</span>
+                            </p>
+                          </div>
+                          <span className="font-semibold tabular-nums">{formatPesos(room.monthly_amount)}</span>
+                        </div>
+                        <div className="mt-auto flex items-center justify-between border-t border-border pt-4 text-sm">
+                          <span className="text-muted-foreground">Due every {ordinal(room.due_day)}</span>
+                          <span className={`font-medium ${statusStyle[status].text}`}>
+                            {status === "paid" ? `Next: ${formatDate(due)}` : formatDate(due)}
+                          </span>
+                        </div>
+                      </div>
+                    </Card>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </Section>
+      </PageContainer>
     </>
   );
 }
