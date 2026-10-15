@@ -4,11 +4,11 @@ Do every step **before Mama Lita or any real boarder enters real data**.
 They are settings in the Supabase dashboard, so they can't be done in
 code. Tick each one as you go.
 
-- [ ] **Turn "Confirm email" ON.**
+- [x] **Turn "Confirm email" ON.**
       Supabase → Authentication → Sign In / Providers → Email.
       Boarders are matched to their room by email. With this off, anyone
       could sign up with a boarder's email and see their payments.
-- [ ] **Set the Site URL to the live app.**
+- [x] **Set the Site URL to the live app.**
       Supabase → Authentication → URL Configuration → Site URL:
       `https://nat-phinma-builder.vercel.app`.
       Otherwise the confirmation email links to `localhost` and fails.

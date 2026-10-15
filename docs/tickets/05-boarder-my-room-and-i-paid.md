@@ -7,7 +7,7 @@ Pending for Mama Lita.
 
 **Blocked by:** 04
 
-**Status:** done — except "Confirm email", which is in docs/GO-LIVE.md
+**Status:** done
 
 - [x] A user whose login email matches a room's `boarder_email` sees
       the boarder screens; everyone else sees the landlord screens
@@ -23,7 +23,7 @@ Pending for Mama Lita.
 - [x] A Pending report does NOT turn the room Paid
 - [x] Tested with two boarder accounts: neither can see the other's
       room or payments
-- [ ] Before any real boarder's email or payments go in, "Confirm
+- [x] Before any real boarder's email or payments go in, "Confirm
       email" is turned ON in Supabase (otherwise anyone can sign up
       with a boarder's email and see their payments)
 - [x] Works on the live URL
