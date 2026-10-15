@@ -16,7 +16,7 @@ import { LandlordShell } from "../../landlord-shell";
 
 export default async function RoomPage({ params, searchParams }: PageProps<"/rooms/[id]">) {
   const { id } = await params;
-  const { recorded, error } = await searchParams;
+  const { recorded, confirmed, rejected, error } = await searchParams;
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -64,6 +64,8 @@ export default async function RoomPage({ params, searchParams }: PageProps<"/roo
         />
 
         {recorded && <Notice tone="success">Payment saved.</Notice>}
+        {confirmed && <Notice tone="success">Payment confirmed.</Notice>}
+        {rejected && <Notice tone="info">Report rejected. The boarder will see your reason.</Notice>}
         {typeof error === "string" && <Notice tone="error">{error}</Notice>}
 
         <TwoColumn

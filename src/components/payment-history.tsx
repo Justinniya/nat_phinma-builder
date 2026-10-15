@@ -1,13 +1,15 @@
 import { Trash2 } from "lucide-react";
 import { deletePayment } from "@/app/rooms/[id]/pay/actions";
-import { Button } from "@/components/ui/button";
+import { ConfirmReject } from "@/components/confirm-reject";
+import { SubmitButton } from "@/components/submit-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PaymentStatusBadge } from "@/components/layout";
 import { methodLabel, typeLabel, type Payment } from "@/lib/payments";
 import { formatDate, formatPeriod, formatPesos, parseDate } from "@/lib/rooms";
 
-// A room's payments, newest first. Shown to Mama Lita (with a remove
-// button for mistakes) and to the boarder (read-only).
+// A room's payments, newest first. Shown to Mama Lita (with Confirm /
+// Reject on pending reports and a remove button for mistakes) and to the
+// boarder (read-only).
 
 export function PaymentHistory({
   payments,
@@ -46,6 +48,12 @@ export function PaymentHistory({
                   {p.status === "rejected" && p.reject_reason && (
                     <p className="text-sm text-red-700 dark:text-red-400">Rejected: {p.reject_reason}</p>
                   )}
+                  {/* Landlord: confirm or reject a boarder's report right here. */}
+                  {removableForRoomId && p.status === "pending" && (
+                    <div className="mt-2">
+                      <ConfirmReject paymentId={p.id} returnTo={`/rooms/${removableForRoomId}`} />
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center gap-3 sm:justify-end">
                   <span className="font-semibold tabular-nums">{formatPesos(p.amount)}</span>
@@ -66,9 +74,9 @@ export function PaymentHistory({
                         <p className="text-xs text-muted-foreground">
                           Remove this payment? Only do this if it was entered by mistake.
                         </p>
-                        <Button type="submit" variant="destructive" size="sm">
+                        <SubmitButton variant="destructive" size="sm" pendingText="Removing…">
                           Yes, remove it
-                        </Button>
+                        </SubmitButton>
                       </form>
                     </details>
                   )}

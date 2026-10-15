@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { PageContainer, PageHeader, PaymentStatusBadge } from "@/components/layout";
+import { ConfirmReject } from "@/components/confirm-reject";
+import { Notice, PageContainer, PageHeader, PaymentStatusBadge } from "@/components/layout";
 import { Card } from "@/components/ui/card";
 import { isLandlord } from "@/lib/my-room";
 import { methodLabel, PAYMENT_COLUMNS, statusLabel, typeLabel, type Payment, type PaymentStatus } from "@/lib/payments";
@@ -22,7 +23,7 @@ export default async function PaymentsPage({ searchParams }: PageProps<"/payment
   if (!user) redirect("/login");
   if (!(await isLandlord(supabase, user.id))) redirect("/");
 
-  const { status: statusParam } = await searchParams;
+  const { status: statusParam, confirmed, rejected, error } = await searchParams;
   const active = filters.find((f) => f === statusParam);
 
   const { data } = await supabase
@@ -79,15 +80,9 @@ export default async function PaymentsPage({ searchParams }: PageProps<"/payment
           })}
         </nav>
 
-        {active === "pending" && shown.length > 0 && (
-          <p className="-mt-2 text-sm text-muted-foreground">
-            Confirm or reject these on the{" "}
-            <Link href="/" className="font-medium text-primary hover:underline">
-              Dashboard
-            </Link>
-            .
-          </p>
-        )}
+        {confirmed && <Notice tone="success">Payment confirmed.</Notice>}
+        {rejected && <Notice tone="info">Report rejected. The boarder will see your reason.</Notice>}
+        {typeof error === "string" && <Notice tone="error">{error}</Notice>}
 
         <Card className="overflow-hidden">
           {shown.length === 0 ? (
@@ -134,7 +129,10 @@ export default async function PaymentsPage({ searchParams }: PageProps<"/payment
                         {formatPesos(p.amount)}
                       </td>
                       <td className="px-6 py-3">
-                        <PaymentStatusBadge status={p.status} />
+                        <div className="flex flex-col items-start gap-2">
+                          <PaymentStatusBadge status={p.status} />
+                          {p.status === "pending" && <ConfirmReject paymentId={p.id} returnTo="/payments" />}
+                        </div>
                       </td>
                     </tr>
                   ))}

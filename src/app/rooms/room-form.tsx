@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Notice } from "@/components/layout";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -114,7 +115,7 @@ export function RoomForm({
         <Link href={room ? `/rooms/${room.id}` : "/rooms"} className={buttonVariants({ variant: "outline" })}>
           Cancel
         </Link>
-        <Button type="submit">{submitLabel}</Button>
+        <SubmitButton pendingText="Saving…">{submitLabel}</SubmitButton>
       </div>
     </form>
   );

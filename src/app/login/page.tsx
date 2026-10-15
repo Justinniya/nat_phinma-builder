@@ -1,6 +1,6 @@
 import { BadgeCheck, CalendarCheck, History, House } from "lucide-react";
 import { Notice } from "@/components/layout";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login, signup } from "./actions";
@@ -89,12 +89,12 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
             {typeof message === "string" && <Notice tone="info">{message}</Notice>}
 
             <div className="mt-2 flex flex-col gap-2.5">
-              <Button formAction={login} size="lg" className="bg-brand text-brand-foreground dark:bg-primary">
+              <SubmitButton formAction={login} size="lg" pendingText="Please wait…" className="bg-brand text-brand-foreground dark:bg-primary">
                 Log in
-              </Button>
-              <Button formAction={signup} variant="outline" size="lg">
+              </SubmitButton>
+              <SubmitButton formAction={signup} variant="outline" size="lg" pendingText="Please wait…">
                 Sign up
-              </Button>
+              </SubmitButton>
             </div>
           </form>
         </section>

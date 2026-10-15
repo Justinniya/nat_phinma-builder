@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Notice } from "@/components/layout";
@@ -136,7 +137,7 @@ export function PaymentForm({
         <Link href={cancelHref} className={buttonVariants({ variant: "outline" })}>
           Cancel
         </Link>
-        <Button type="submit">{submitLabel}</Button>
+        <SubmitButton pendingText="Sending…">{submitLabel}</SubmitButton>
       </div>
     </form>
   );

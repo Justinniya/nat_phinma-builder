@@ -1,7 +1,7 @@
 import { Trash2 } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
 import { Notice, PageContainer, PageHeader, TwoColumn } from "@/components/layout";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/submit-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { listRoomPhotos, roomFolder } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
@@ -75,15 +75,15 @@ export default async function EditRoomPage({ params, searchParams }: PageProps<"
                             </span>
                           )}
                           <form action={deleteRoomPhoto.bind(null, room.id, photo.path)} className="absolute right-2 top-2">
-                            <Button
-                              type="submit"
+                            <SubmitButton
                               variant="destructive"
                               size="icon"
+                              pendingText="…"
                               className="h-8 w-8 rounded-full"
                               aria-label={`Delete photo ${i + 1}`}
                             >
                               <Trash2 className="h-4 w-4" aria-hidden />
-                            </Button>
+                            </SubmitButton>
                           </form>
                         </div>
                       ))}
@@ -107,9 +107,9 @@ export default async function EditRoomPage({ params, searchParams }: PageProps<"
                       Delete this room…
                     </summary>
                     <form action={deleteRoom.bind(null, room.id)} className="mt-3">
-                      <Button type="submit" variant="destructive" className="w-full">
+                      <SubmitButton variant="destructive" className="w-full" pendingText="Deleting…">
                         Yes, delete {room.label}
-                      </Button>
+                      </SubmitButton>
                     </form>
                   </details>
                 </CardContent>
