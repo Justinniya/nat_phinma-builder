@@ -18,13 +18,13 @@ code. Tick each one as you go.
       (This also deletes their demo rooms and payments.)
 - [x] **Check the landlords list.** Supabase → Table Editor → `landlords`.
       Only real landlords should be there. Anyone else could add rooms.
-- [ ] **Add Mama Lita as a landlord.** After she signs up in the app, run:
+- [x] **Add Mama Lita as a landlord.** After she signs up in the app, run:
       `insert into landlords (user_id) select id from auth.users where email = 'HER EMAIL';`
 - [x] **Remove the unused example table**, if `001-example.sql` was ever
       run (anyone on the internet can read and add to it):
       `drop table if exists notes;`
-- [ ] **Check every table says RLS enabled** in Table Editor.
-- [ ] **Test with two real phones:** a boarder can see only their own
+- [x] **Check every table says RLS enabled** in Table Editor.
+- [x] **Test with two real phones:** a boarder can see only their own
       room, and Mama Lita sees every room.
 
 ## Setting up a boarder who didn't get the email
