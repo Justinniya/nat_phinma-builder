@@ -12,11 +12,11 @@ code. Tick each one as you go.
       Supabase → Authentication → URL Configuration → Site URL:
       `https://nat-phinma-builder.vercel.app`.
       Otherwise the confirmation email links to `localhost` and fails.
-- [ ] **Delete the demo accounts.** Their password (`demo1234`) is public
+- [x] **Delete the demo accounts.** Their password (`demo1234`) is public
       in the repo. Run in the SQL Editor:
       `delete from auth.users where email like '%.demo@example.com' or email like '%.boarder@example.com';`
       (This also deletes their demo rooms and payments.)
-- [ ] **Check the landlords list.** Supabase → Table Editor → `landlords`.
+- [x] **Check the landlords list.** Supabase → Table Editor → `landlords`.
       Only real landlords should be there. Anyone else could add rooms.
 - [ ] **Add Mama Lita as a landlord.** After she signs up in the app, run:
       `insert into landlords (user_id) select id from auth.users where email = 'HER EMAIL';`
