@@ -7,23 +7,23 @@ Pending for Mama Lita.
 
 **Blocked by:** 04
 
-**Status:** todo
+**Status:** done — except "Confirm email", which is in docs/GO-LIVE.md
 
-- [ ] A user whose login email matches a room's `boarder_email` sees
+- [x] A user whose login email matches a room's `boarder_email` sees
       the boarder screens; everyone else sees the landlord screens
-- [ ] Boarder policies added on `payments`: a boarder may read payments
+- [x] Boarder policies added on `payments`: a boarder may read payments
       for their own room only, and may add a payment only for their own
       room with type monthly, status pending and `reported_by` set to
       themselves; they can never edit or delete
-- [ ] My room screen: due date this period, amount, status, and history
+- [x] My room screen: due date this period, amount, status, and history
       showing Pending, Confirmed and Rejected (with the reason)
-- [ ] I paid form: amount pre-filled, date defaults to today, method
+- [x] I paid form: amount pre-filled, date defaults to today, method
       defaults to Cash (GCash optional), received by defaults to "Mama
       Lita", reference number shown only for GCash; saves as Pending
-- [ ] A Pending report does NOT turn the room Paid
-- [ ] Tested with two boarder accounts: neither can see the other's
+- [x] A Pending report does NOT turn the room Paid
+- [x] Tested with two boarder accounts: neither can see the other's
       room or payments
 - [ ] Before any real boarder's email or payments go in, "Confirm
       email" is turned ON in Supabase (otherwise anyone can sign up
       with a boarder's email and see their payments)
-- [ ] Works on the live URL
+- [x] Works on the live URL
