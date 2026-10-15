@@ -46,7 +46,6 @@ stays small enough to actually ship by Session 3.
   before Mama Lita confirms it.
 - **GCash screenshot uploads**: attach proof-of-payment images to a
   payment (needs file storage).
-- **Digital receipts**: generate a receipt a boarder can keep.
 - **Utility calculator**: work out each room's electric or water share
   from sub-meter readings.
 - **Deposit refunds and deductions**: track returning a deposit and

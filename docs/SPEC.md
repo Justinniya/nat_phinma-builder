@@ -82,7 +82,10 @@ There is one landlord and one boarder per room.
    by default, or GCash), received by ("Mama Lita" by default), and a
    reference number if GCash. It saves as Pending. **One report per
    month:** a room can have at most one pending or confirmed monthly
-   payment per month (database rule, 008). While one is waiting, the
+   payment per month (database rule, 008). Every confirmed payment has a
+   **Payment confirmation** page (not a BIR official receipt) that the
+   boarder can screenshot as proof.
+   While one is waiting, the
    I paid button is hidden. A rejected report doesn't count, so the
    boarder can send a corrected one.
 
@@ -225,7 +228,6 @@ On the **live Vercel URL**, using two phones:
 - Boarders editing or deleting a report after sending it
 - Uploading GCash screenshots (room photos are in; payment proof images
   are not)
-- Generating digital receipts
 - Calculating utility bills from sub-meter readings
 - Deposit refunds or damage deductions
 - Automatically applying advances to a month

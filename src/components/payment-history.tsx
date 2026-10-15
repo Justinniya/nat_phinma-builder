@@ -1,4 +1,5 @@
 import { Trash2 } from "lucide-react";
+import Link from "next/link";
 import { deletePayment } from "@/app/rooms/[id]/pay/actions";
 import { ConfirmReject } from "@/components/confirm-reject";
 import { SubmitButton } from "@/components/submit-button";
@@ -47,6 +48,11 @@ export function PaymentHistory({
                   </p>
                   {p.status === "rejected" && p.reject_reason && (
                     <p className="text-sm text-red-700 dark:text-red-400">Rejected: {p.reject_reason}</p>
+                  )}
+                  {p.status === "confirmed" && (
+                    <Link href={`/confirmation/${p.id}`} className="w-fit text-sm font-medium text-primary hover:underline">
+                      View confirmation
+                    </Link>
                   )}
                   {/* Landlord: confirm or reject a boarder's report right here. */}
                   {removableForRoomId && p.status === "pending" && (

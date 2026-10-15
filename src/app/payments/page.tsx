@@ -132,6 +132,11 @@ export default async function PaymentsPage({ searchParams }: PageProps<"/payment
                         <div className="flex flex-col items-start gap-2">
                           <PaymentStatusBadge status={p.status} />
                           {p.status === "pending" && <ConfirmReject paymentId={p.id} returnTo="/payments" />}
+                          {p.status === "confirmed" && (
+                            <Link href={`/confirmation/${p.id}`} className="text-xs font-medium text-primary hover:underline">
+                              View confirmation
+                            </Link>
+                          )}
                         </div>
                       </td>
                     </tr>
