@@ -41,8 +41,12 @@ export async function recordPayment(roomId: string, formData: FormData) {
   });
 
   if (error) {
-    // 23505 = "already exists" — the database's one-confirmed-payment-per-month rule.
-    back(error.code === "23505" ? "This month is already marked as paid for this room." : error.message);
+    // 23505 = "already exists" — the one-payment-per-month rule (008).
+    back(
+      error.code === "23505"
+        ? "This month is already paid, or the boarder has a report waiting. Confirm or reject it on the Dashboard first."
+        : error.message,
+    );
   }
 
   revalidatePath("/");

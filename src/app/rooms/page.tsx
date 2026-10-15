@@ -11,7 +11,7 @@ import { coverPhotoUrls } from "@/lib/room-photos";
 import { roomStatusStyle, type RoomStatus } from "@/lib/rooms";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
-import { TopBar } from "../top-bar";
+import { LandlordShell } from "../landlord-shell";
 
 // Mama Lita's Rooms page: every room as a card, with tabs to show only
 // one status (e.g. just the overdue ones).
@@ -37,8 +37,7 @@ export default async function RoomsPage({ searchParams }: PageProps<"/rooms">) {
   ];
 
   return (
-    <>
-      <TopBar email={user.email} active="rooms" />
+    <LandlordShell email={user.email} active="rooms">
       <PageContainer>
         <PageHeader
           title="Rooms"
@@ -97,6 +96,6 @@ export default async function RoomsPage({ searchParams }: PageProps<"/rooms">) {
           </div>
         )}
       </PageContainer>
-    </>
+    </LandlordShell>
   );
 }

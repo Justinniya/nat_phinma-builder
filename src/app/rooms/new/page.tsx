@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { PageContainer, PageHeader, TwoColumn } from "@/components/layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
-import { TopBar } from "../../top-bar";
+import { LandlordShell } from "../../landlord-shell";
 import { createRoom } from "../actions";
 import { RoomForm } from "../room-form";
 
@@ -20,8 +20,7 @@ export default async function NewRoomPage({ searchParams }: PageProps<"/rooms/ne
   const { error } = await searchParams;
 
   return (
-    <>
-      <TopBar email={user.email} active="rooms" />
+    <LandlordShell email={user.email} active="rooms">
       <PageContainer>
         <PageHeader back={{ href: "/rooms", label: "Rooms" }} title="Add a room" />
         <TwoColumn
@@ -48,6 +47,6 @@ export default async function NewRoomPage({ searchParams }: PageProps<"/rooms/ne
           }
         />
       </PageContainer>
-    </>
+    </LandlordShell>
   );
 }

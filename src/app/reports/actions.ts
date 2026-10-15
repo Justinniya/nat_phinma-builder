@@ -21,7 +21,7 @@ export async function confirmPayment(paymentId: string) {
     .eq("status", "pending");
 
   if (error) {
-    // 23505 = the one-confirmed-payment-per-month rule from 005.
+    // 23505 = the one-payment-per-month rule (008).
     const message =
       error.code === "23505"
         ? "That month is already marked as paid for this room. Reject this report instead."

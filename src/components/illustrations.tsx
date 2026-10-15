@@ -3,33 +3,6 @@
 
 type Props = { className?: string };
 
-// A two-storey boarding house — drawn in white for the blue login panel.
-export function BoardingHouseIllustration({ className }: Props) {
-  return (
-    <svg viewBox="0 0 400 260" className={className} role="img" aria-label="A boarding house">
-      <ellipse cx="200" cy="246" rx="180" ry="10" className="fill-white/10" />
-
-      {/* House body and roof */}
-      <rect x="90" y="104" width="220" height="140" rx="6" className="fill-white/95" />
-      <path d="M74 112 L200 40 L326 112 Z" className="fill-white/30" />
-      <rect x="178" y="74" width="44" height="22" rx="4" className="fill-white/60" />
-
-      {/* Windows: top floor */}
-      {[110, 178, 246].map((x, i) => (
-        <rect key={x} x={x} y="124" width="44" height="34" rx="4"
-          className={i === 1 ? "fill-blue-200" : "fill-blue-500/80"} />
-      ))}
-      {/* Windows: ground floor */}
-      <rect x="110" y="182" width="44" height="34" rx="4" className="fill-blue-200" />
-      <rect x="246" y="182" width="44" height="34" rx="4" className="fill-blue-500/80" />
-
-      {/* Door */}
-      <rect x="178" y="186" width="44" height="58" rx="4" className="fill-blue-600" />
-      <circle cx="212" cy="216" r="2.5" className="fill-white" />
-    </svg>
-  );
-}
-
 // A bed under a window — shown on room cards that have no photo yet.
 export function RoomIllustration({ className }: Props) {
   return (

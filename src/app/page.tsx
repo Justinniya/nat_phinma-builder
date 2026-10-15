@@ -12,7 +12,7 @@ import { createClient } from "@/lib/supabase/server";
 import { BoarderHome } from "./boarder-home";
 import { NotLinked } from "./not-linked";
 import { ToConfirm, type PendingReport } from "./to-confirm";
-import { TopBar } from "./top-bar";
+import { LandlordShell } from "./landlord-shell";
 
 // Mama Lita's Dashboard: only what needs her attention today.
 //   Overview        — how many rooms are in each state (tap to see them)
@@ -57,8 +57,7 @@ export default async function Dashboard({ searchParams }: PageProps<"/">) {
     );
 
   return (
-    <>
-      <TopBar email={user.email} active="dashboard" />
+    <LandlordShell email={user.email} active="dashboard">
       <PageContainer>
         <PageHeader
           title="Dashboard"
@@ -153,6 +152,6 @@ export default async function Dashboard({ searchParams }: PageProps<"/">) {
           </Card>
         </Section>
       </PageContainer>
-    </>
+    </LandlordShell>
   );
 }

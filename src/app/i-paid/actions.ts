@@ -42,7 +42,14 @@ export async function reportPayment(formData: FormData) {
     reference_no: method === "gcash" ? text("reference_no") || null : null,
     status: "pending",
   });
-  if (error) back(error.message);
+  if (error) {
+    // 23505 = "already exists" — the one-report-per-month rule (008).
+    back(
+      error.code === "23505"
+        ? "You already sent a payment for that month, or it is already paid. Wait for your landlord to confirm it."
+        : error.message,
+    );
+  }
 
   revalidatePath("/");
   redirect("/?reported=1");

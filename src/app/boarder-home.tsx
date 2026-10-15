@@ -42,7 +42,8 @@ export async function BoarderHome({ email, room, reported }: { email: string | u
           badge={<RoomStatusBadge status={due.status} />}
           description={`Here's where you stand for ${room.label}.`}
           actions={
-            due.status !== "paid" && (
+            due.status !== "paid" &&
+            !waiting && (
               <Link href="/i-paid" className={buttonVariants()}>
                 <Send className="h-4 w-4" aria-hidden />
                 I paid

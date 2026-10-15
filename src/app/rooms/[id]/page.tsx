@@ -9,7 +9,7 @@ import { PAYMENT_COLUMNS, type Payment } from "@/lib/payments";
 import { listRoomPhotos } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
 import { confirmedPeriods, roomDue, ROOM_COLUMNS, todayInManila, type Room } from "@/lib/rooms";
-import { TopBar } from "../../top-bar";
+import { LandlordShell } from "../../landlord-shell";
 
 // One room: payment history on the left (the main thing), the room's
 // details on the right — so "did I pay in August?" takes seconds.
@@ -42,8 +42,7 @@ export default async function RoomPage({ params, searchParams }: PageProps<"/roo
   const due = roomDue(room, todayInManila(), confirmedPeriods(payments));
 
   return (
-    <>
-      <TopBar email={user.email} active="rooms" />
+    <LandlordShell email={user.email} active="rooms">
       <PageContainer>
         <PageHeader
           back={{ href: "/rooms", label: "Rooms" }}
@@ -78,6 +77,6 @@ export default async function RoomPage({ params, searchParams }: PageProps<"/roo
           side={<RoomSummary room={room} photoUrl={cover?.url} due={due} showEmail showNote />}
         />
       </PageContainer>
-    </>
+    </LandlordShell>
   );
 }

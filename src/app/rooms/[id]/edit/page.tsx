@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { listRoomPhotos, roomFolder } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
 import { ROOM_COLUMNS, type Room } from "@/lib/rooms";
-import { TopBar } from "../../../top-bar";
+import { LandlordShell } from "../../../landlord-shell";
 import { deleteRoom, deleteRoomPhoto, updateRoom } from "../../actions";
 import { RoomForm } from "../../room-form";
 import { PhotoUploader } from "./photo-uploader";
@@ -32,8 +32,7 @@ export default async function EditRoomPage({ params, searchParams }: PageProps<"
   const photos = await listRoomPhotos(supabase, user.id, room.id);
 
   return (
-    <>
-      <TopBar email={user.email} active="rooms" />
+    <LandlordShell email={user.email} active="rooms">
       <PageContainer>
         <PageHeader
           back={{ href: `/rooms/${room.id}`, label: room.label }}
@@ -119,6 +118,6 @@ export default async function EditRoomPage({ params, searchParams }: PageProps<"
           }
         />
       </PageContainer>
-    </>
+    </LandlordShell>
   );
 }

@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { listRoomPhotos } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
 import { confirmedPeriods, isoDate, roomDue, ROOM_COLUMNS, todayInManila, type Room } from "@/lib/rooms";
-import { TopBar } from "../../../top-bar";
+import { LandlordShell } from "../../../landlord-shell";
 import { recordPayment } from "./actions";
 
 export default async function RecordPaymentPage({ params, searchParams }: PageProps<"/rooms/[id]/pay">) {
@@ -36,8 +36,7 @@ export default async function RecordPaymentPage({ params, searchParams }: PagePr
   const [cover] = await listRoomPhotos(supabase, user.id, room.id);
 
   return (
-    <>
-      <TopBar email={user.email} active="rooms" />
+    <LandlordShell email={user.email} active="rooms">
       <PageContainer>
         <PageHeader
           back={{ href: `/rooms/${room.id}`, label: room.label }}
@@ -62,6 +61,6 @@ export default async function RecordPaymentPage({ params, searchParams }: PagePr
           side={<RoomSummary room={room} photoUrl={cover?.url} due={due} />}
         />
       </PageContainer>
-    </>
+    </LandlordShell>
   );
 }
