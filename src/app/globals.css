@@ -3,61 +3,54 @@
 /* Design tokens. Change these to re-skin the whole app at once —
    every component below reads from them.
 
-   The look is "glassmorphism": see-through, blurred panels floating over
-   a soft colourful background. The see-through colours use rgba() —
-   the last number is how solid the colour is (0 = invisible, 1 = solid). */
+   The look: clean and professional. A light grey page, white panels with
+   a thin border and a very soft shadow, and one blue for anything you can
+   tap. Everything else is shades of grey ("slate"). */
 :root {
-  --page: #eef2ff;
-  --blob-1: #a5b4fc;
-  --blob-2: #99f6e4;
-  --blob-3: #fbcfe8;
-
-  --background: rgba(255, 255, 255, 0.7);
+  --page: #f5f7fb;
+  --background: #ffffff;
   --foreground: #0f172a;
-  --card: rgba(255, 255, 255, 0.55);
+  --card: #ffffff;
   --card-foreground: #0f172a;
-  --primary: #4f46e5;
+  --primary: #2563eb;
   --primary-foreground: #ffffff;
-  --secondary: rgba(255, 255, 255, 0.6);
+  --secondary: #f1f5f9;
   --secondary-foreground: #0f172a;
-  --muted: rgba(255, 255, 255, 0.5);
-  --muted-foreground: #475569;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --border: rgba(255, 255, 255, 0.7);
-  --input: rgba(15, 23, 42, 0.15);
-  --ring: #4f46e5;
-  --radius: 1rem;
-  --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.12);
+  --border: #e2e8f0;
+  --input: #cbd5e1;
+  --ring: #2563eb;
+  --radius: 0.75rem;
+  --panel-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --page: #0b1020;
-    --blob-1: #3730a3;
-    --blob-2: #115e59;
-    --blob-3: #831843;
-
-    --background: rgba(15, 23, 42, 0.6);
-    --foreground: #f1f5f9;
-    --card: rgba(30, 41, 59, 0.45);
-    --card-foreground: #f1f5f9;
-    --primary: #818cf8;
-    --primary-foreground: #0b1020;
-    --secondary: rgba(51, 65, 85, 0.5);
-    --secondary-foreground: #f1f5f9;
-    --muted: rgba(51, 65, 85, 0.4);
-    --muted-foreground: #cbd5e1;
+    --page: #0b1220;
+    --background: #0f172a;
+    --foreground: #e2e8f0;
+    --card: #111a2e;
+    --card-foreground: #e2e8f0;
+    --primary: #3b82f6;
+    --primary-foreground: #ffffff;
+    --secondary: #1e293b;
+    --secondary-foreground: #e2e8f0;
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8;
     --destructive: #ef4444;
     --destructive-foreground: #ffffff;
-    --border: rgba(255, 255, 255, 0.12);
-    --input: rgba(255, 255, 255, 0.18);
-    --ring: #818cf8;
-    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    --border: #1e293b;
+    --input: #334155;
+    --ring: #3b82f6;
+    --panel-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   }
 }
 
 @theme inline {
+  --color-page: var(--page);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -78,25 +71,16 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
-/* The colourful background the glass panels float over: a few large,
-   soft colour blobs on a plain base colour. */
 body {
   background-color: var(--page);
-  background-image:
-    radial-gradient(at 8% 12%, var(--blob-1) 0, transparent 45%),
-    radial-gradient(at 92% 8%, var(--blob-2) 0, transparent 40%),
-    radial-gradient(at 85% 88%, var(--blob-3) 0, transparent 45%),
-    radial-gradient(at 12% 92%, var(--blob-2) 0, transparent 35%);
-  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-sans);
 }
 
-/* A frosted-glass panel. Used by Card and the top bar. */
-@utility glass {
+/* A white panel with a thin border and soft shadow. Used by Card, the
+   top bar and the status counters. */
+@utility panel {
   background-color: var(--card);
   border: 1px solid var(--border);
-  box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  box-shadow: var(--panel-shadow);
 }

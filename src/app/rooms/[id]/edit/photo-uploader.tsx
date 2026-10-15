@@ -63,7 +63,7 @@ export function PhotoUploader({ folder }: { folder: string }) {
   return (
     <div className="flex flex-col gap-2">
       <label
-        className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-[var(--radius)] border-2 border-dashed border-input p-6 text-center transition-colors hover:bg-secondary ${status ? "pointer-events-none opacity-60" : ""}`}
+        className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-[var(--radius)] border-2 border-dashed border-input p-6 text-center transition-colors hover:border-primary hover:bg-primary/5 ${status ? "pointer-events-none opacity-60" : ""}`}
       >
         <ImagePlus className="h-8 w-8 text-primary" aria-hidden />
         <span className="font-medium">{status ?? "Add photos"}</span>
@@ -79,7 +79,7 @@ export function PhotoUploader({ folder }: { folder: string }) {
         />
       </label>
       {error && (
-        <p className="rounded-[var(--radius)] bg-red-500/15 p-3 text-sm text-red-700 dark:text-red-300">{error}</p>
+        <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">{error}</p>
       )}
     </div>
   );

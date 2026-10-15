@@ -20,27 +20,13 @@ import { TopBar } from "./top-bar";
 // Mama Lita's dashboard: every room as a card, with its photo, who rents
 // it, when it's due and whether it's overdue.
 
-const statusStyle: Record<RoomStatus, { label: string; badge: string; dot: string }> = {
-  overdue: {
-    label: "Overdue",
-    badge: "bg-red-500/90 text-white",
-    dot: "bg-red-500",
-  },
-  due_soon: {
-    label: "Due soon",
-    badge: "bg-amber-400/90 text-amber-950",
-    dot: "bg-amber-500",
-  },
-  upcoming: {
-    label: "Upcoming",
-    badge: "bg-indigo-500/90 text-white",
-    dot: "bg-indigo-500",
-  },
-  vacant: {
-    label: "Vacant",
-    badge: "bg-slate-500/80 text-white",
-    dot: "bg-slate-400",
-  },
+// Status colours are kept to small dots, so the page stays calm and the
+// blue stays the main colour.
+const statusStyle: Record<RoomStatus, { label: string; dot: string; text: string }> = {
+  overdue: { label: "Overdue", dot: "bg-red-500", text: "text-red-700 dark:text-red-400" },
+  due_soon: { label: "Due soon", dot: "bg-amber-500", text: "text-amber-700 dark:text-amber-400" },
+  upcoming: { label: "Upcoming", dot: "bg-blue-500", text: "text-blue-700 dark:text-blue-400" },
+  vacant: { label: "Vacant", dot: "bg-slate-400", text: "text-slate-600 dark:text-slate-400" },
 };
 
 const statusOrder: RoomStatus[] = ["overdue", "due_soon", "upcoming", "vacant"];
@@ -66,28 +52,30 @@ export default async function Dashboard() {
     <>
       <TopBar email={user.email} />
 
-      <main className="flex w-full flex-1 flex-col gap-6 px-4 py-6 sm:px-6 lg:px-10">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+      <main className="flex w-full flex-1 flex-col gap-8 px-4 py-8 sm:px-6 lg:px-10">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-col gap-1">
-            <h1 className="text-3xl font-semibold tracking-tight">Rooms</h1>
-            <p className="flex items-center gap-2 text-muted-foreground">
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Rooms</h1>
+            <p className="flex items-center gap-2 text-sm text-muted-foreground">
               <CalendarDays className="h-4 w-4" aria-hidden />
               Today is {formatDate(today)} · {rooms.length} {rooms.length === 1 ? "room" : "rooms"}
             </p>
           </div>
-          <Link href="/rooms/new" className={buttonVariants({ size: "lg" })}>
-            <Plus className="h-5 w-5" aria-hidden />
-            Add a room
+          <Link href="/rooms/new" className={buttonVariants()}>
+            <Plus className="h-4 w-4" aria-hidden />
+            Add room
           </Link>
         </div>
 
         {/* How many rooms are in each state, at a glance. */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {statusOrder.map((status) => (
-            <div key={status} className="glass flex items-center gap-3 rounded-[var(--radius)] px-4 py-3">
-              <span className={`h-3 w-3 shrink-0 rounded-full ${statusStyle[status].dot}`} />
-              <span className="text-sm text-muted-foreground">{statusStyle[status].label}</span>
-              <span className="ml-auto text-2xl font-semibold tabular-nums">
+            <div key={status} className="panel flex flex-col gap-2 rounded-[var(--radius)] p-5">
+              <span className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <span className={`h-2 w-2 rounded-full ${statusStyle[status].dot}`} />
+                {statusStyle[status].label}
+              </span>
+              <span className="text-3xl font-semibold tabular-nums tracking-tight">
                 {roomsWithStatus.filter((r) => r.status === status).length}
               </span>
             </div>
@@ -95,63 +83,59 @@ export default async function Dashboard() {
         </div>
 
         {error && (
-          <p className="rounded-[var(--radius)] bg-red-500/15 p-3 text-sm text-red-700 dark:text-red-300">
+          <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">
             Could not load rooms: {error.message}
           </p>
         )}
 
         {!error && rooms.length === 0 && (
-          <div className="glass flex flex-col items-center gap-4 rounded-[var(--radius)] p-10 text-center">
-            <AddFirstRoomIllustration className="h-36 w-auto" />
-            <p className="text-lg font-medium">No rooms yet</p>
-            <p className="text-muted-foreground">Tap “Add a room” to add your first one.</p>
+          <div className="panel flex flex-col items-center gap-3 rounded-[var(--radius)] px-6 py-14 text-center">
+            <AddFirstRoomIllustration className="h-28 w-auto" />
+            <p className="font-semibold">No rooms yet</p>
+            <p className="text-sm text-muted-foreground">Add your first room to start tracking rent.</p>
           </div>
         )}
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {roomsWithStatus.map(({ room, status }) => {
             const style = statusStyle[status];
             const due = dueDateInMonth(room.due_day, today.year, today.month);
             const photo = photos[room.id];
             return (
               <Link key={room.id} href={`/rooms/${room.id}/edit`} className="group block">
-                <Card className="h-full overflow-hidden transition-transform duration-200 group-hover:-translate-y-1">
+                <Card className="h-full overflow-hidden transition-shadow duration-200 group-hover:shadow-md group-hover:ring-1 group-hover:ring-primary/30">
                   {/* Photo, or an illustration if there's none yet */}
-                  <div className="relative aspect-[16/10] w-full overflow-hidden">
+                  <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-border bg-secondary">
                     {photo ? (
                       // eslint-disable-next-line @next/next/no-img-element -- private, short-lived photo links
-                      <img
-                        src={photo}
-                        alt={`Photo of ${room.label}`}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
+                      <img src={photo} alt={`Photo of ${room.label}`} className="h-full w-full object-cover" />
                     ) : (
                       <RoomIllustration className="h-full w-full" />
                     )}
-                    <span
-                      className={`absolute right-3 top-3 rounded-full px-3 py-1 text-xs font-semibold shadow-sm backdrop-blur ${style.badge}`}
-                    >
+                    <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-xs font-medium text-slate-700 shadow-sm ring-1 ring-black/5 dark:bg-slate-900/90 dark:text-slate-200 dark:ring-white/10">
+                      <span className={`h-1.5 w-1.5 rounded-full ${style.dot}`} />
                       {style.label}
                     </span>
                   </div>
 
-                  <div className="flex flex-col gap-3 p-5">
-                    <div className="flex items-center justify-between gap-3">
-                      <h2 className="text-xl font-semibold tracking-tight">{room.label}</h2>
-                      <span className="text-lg font-semibold tabular-nums">{formatPesos(room.monthly_amount)}</span>
+                  <div className="flex flex-col gap-4 p-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex flex-col gap-1">
+                        <h2 className="font-semibold tracking-tight">{room.label}</h2>
+                        <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                          <User className="h-3.5 w-3.5" aria-hidden />
+                          {room.boarder_first_name ?? "No boarder"}
+                        </p>
+                      </div>
+                      <span className="font-semibold tabular-nums">{formatPesos(room.monthly_amount)}</span>
                     </div>
-                    <p className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-muted-foreground" aria-hidden />
-                      {room.boarder_first_name ?? <span className="text-muted-foreground">No boarder</span>}
-                    </p>
-                    <p className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <CalendarDays className="h-4 w-4" aria-hidden />
-                      <span>
-                        Due <span className="font-medium text-foreground">{formatDate(due)}</span> · every{" "}
-                        {room.due_day}
+                    <div className="flex items-center justify-between border-t border-border pt-4 text-sm">
+                      <span className="text-muted-foreground">
+                        Due every {room.due_day}
                         {ordinalSuffix(room.due_day)}
                       </span>
-                    </p>
+                      <span className={`font-medium ${style.text}`}>{formatDate(due)}</span>
+                    </div>
                   </div>
                 </Card>
               </Link>

@@ -35,7 +35,7 @@ export default async function EditRoomPage({ params, searchParams }: PageProps<"
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             {saved && (
-              <p className="rounded-[var(--radius)] bg-emerald-500/15 p-3 text-sm text-emerald-800 dark:text-emerald-200">
+              <p className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300">
                 {room.label} is saved. Add some photos below, or go back to Rooms.
               </p>
             )}
@@ -66,7 +66,7 @@ export default async function EditRoomPage({ params, searchParams }: PageProps<"
                         className="aspect-square w-full object-cover"
                       />
                       {i === 0 && (
-                        <span className="absolute left-2 top-2 rounded-full bg-black/50 px-2 py-0.5 text-xs text-white backdrop-blur">
+                        <span className="absolute left-2 top-2 rounded-full bg-white/95 px-2 py-0.5 text-xs font-medium text-slate-700 shadow-sm">
                           Cover
                         </span>
                       )}
@@ -91,7 +91,7 @@ export default async function EditRoomPage({ params, searchParams }: PageProps<"
           </Card>
 
           {/* Delete is hidden behind a second tap so it can't happen by accident. */}
-          <details className="glass rounded-[var(--radius)] p-4">
+          <details className="panel rounded-[var(--radius)] p-4">
             <summary className="cursor-pointer text-sm font-medium text-destructive">Delete this room</summary>
             <form action={deleteRoom.bind(null, room.id)} className="mt-4 flex flex-col gap-3">
               <p className="text-sm text-muted-foreground">This removes {room.label} and its photos for good.</p>

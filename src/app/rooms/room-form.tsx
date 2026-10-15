@@ -83,7 +83,7 @@ export function RoomForm({
       </div>
 
       {error && (
-        <p className="rounded-[var(--radius)] bg-red-500/15 p-3 text-sm text-red-700 dark:text-red-300">{error}</p>
+        <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">{error}</p>
       )}
 
       <div className="flex gap-3">

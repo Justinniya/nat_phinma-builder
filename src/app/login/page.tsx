@@ -1,6 +1,5 @@
-import { Banknote, CalendarDays, NotebookPen } from "lucide-react";
+import { Banknote, CalendarDays, House, NotebookPen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BoardingHouseIllustration } from "@/components/illustrations";
@@ -16,39 +15,52 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const { error, message } = await searchParams;
 
   return (
-    <main className="grid w-full flex-1 grid-cols-1 items-center gap-10 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-16">
-      {/* Left side: what the app is. On phones this sits above the form. */}
-      <section className="flex flex-col gap-6">
-        <span className="glass w-fit rounded-full px-4 py-1 text-sm text-muted-foreground">
-          For boarding house landlords and boarders
-        </span>
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+    <main className="grid w-full flex-1 grid-cols-1 lg:grid-cols-2">
+      {/* Left: blue brand panel. On phones it becomes a short header. */}
+      <section className="flex flex-col justify-between gap-8 bg-primary px-6 py-8 text-primary-foreground sm:px-10 lg:px-16 lg:py-12">
+        <div className="flex items-center gap-2.5 font-semibold">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15">
+            <House className="h-4 w-4" aria-hidden />
+          </span>
           Rent Ledger
-        </h1>
-        <p className="max-w-xl text-lg text-muted-foreground">
-          The notebook, the GCash screenshots and the Messenger chats — in one place.
-        </p>
-        <BoardingHouseIllustration className="w-full max-w-md" />
-        <ul className="hidden max-w-xl flex-col gap-3 sm:flex">
-          {highlights.map(({ icon: Icon, text }) => (
-            <li key={text} className="glass flex items-center gap-3 rounded-[var(--radius)] px-4 py-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
-                <Icon className="h-5 w-5" aria-hidden />
-              </span>
-              <span>{text}</span>
-            </li>
-          ))}
-        </ul>
+        </div>
+
+        <div className="hidden flex-col gap-8 lg:flex">
+          <BoardingHouseIllustration className="w-full max-w-sm" />
+          <div className="flex flex-col gap-3">
+            <h2 className="text-3xl font-semibold tracking-tight">
+              Every rent payment, in one place.
+            </h2>
+            <p className="max-w-md text-white/80">
+              No more cross-checking the notebook, GCash screenshots and Messenger chats.
+            </p>
+          </div>
+          <ul className="flex flex-col gap-4">
+            {highlights.map(({ icon: Icon, text }) => (
+              <li key={text} className="flex items-center gap-3 text-white/90">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/15">
+                  <Icon className="h-4 w-4" aria-hidden />
+                </span>
+                <span className="text-sm">{text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <p className="hidden text-sm text-white/60 lg:block">For boarding house landlords and boarders.</p>
       </section>
 
-      {/* Right side: the login form. */}
-      <Card className="w-full max-w-md justify-self-center lg:justify-self-end">
-        <CardHeader>
-          <CardTitle className="text-2xl">Log in</CardTitle>
-          <CardDescription>New here? Fill in your email and a password, then tap Sign up.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form className="flex flex-col gap-4">
+      {/* Right: the login form. */}
+      <section className="flex items-center justify-center bg-card px-6 py-12 sm:px-10">
+        <div className="flex w-full max-w-sm flex-col gap-8">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-2xl font-semibold tracking-tight">Log in to your account</h1>
+            <p className="text-sm text-muted-foreground">
+              New here? Enter your email and a password, then choose Sign up.
+            </p>
+          </div>
+
+          <form className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
               <Label htmlFor="email">Email</Label>
               <Input id="email" name="email" type="email" autoComplete="email" required />
@@ -66,23 +78,25 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
             </div>
 
             {typeof error === "string" && (
-              <p className="rounded-[var(--radius)] bg-red-500/15 p-3 text-sm text-red-700 dark:text-red-300">
+              <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">
                 {error}
               </p>
             )}
             {typeof message === "string" && (
-              <p className="rounded-[var(--radius)] bg-secondary p-3 text-sm">{message}</p>
+              <p className="rounded-lg border border-border bg-secondary p-3 text-sm">{message}</p>
             )}
 
-            <Button formAction={login} size="lg">
-              Log in
-            </Button>
-            <Button formAction={signup} variant="outline" size="lg">
-              Sign up
-            </Button>
+            <div className="flex flex-col gap-3">
+              <Button formAction={login} size="lg">
+                Log in
+              </Button>
+              <Button formAction={signup} variant="outline" size="lg">
+                Sign up
+              </Button>
+            </div>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </section>
     </main>
   );
 }
