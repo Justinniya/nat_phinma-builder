@@ -5,6 +5,25 @@ Good ideas that are not in the MVP.
 Parking something here is a decision, not a loss. It is how the MVP
 stays small enough to actually ship by Session 3.
 
+## From /code-review (small polish, none block the demo)
+
+- **Bigger status colours**: room cards show Paid / Due soon / Overdue
+  as a small dot; a coloured badge or card edge would be easier to see
+  at a glance.
+- **Hide the room note from boarders**: the screen doesn't show it, but
+  a boarder can read Mama Lita's private note through the database.
+  Move notes to a landlord-only table, or treat notes as not private.
+- **Fixed messages instead of URL text**: error and success messages
+  are read from the web address, so someone could send a link that shows
+  a fake notice on the real site. Use short codes mapped to fixed text.
+- **Limit "I paid" reports**: allow only one pending report per room
+  per month, so the To confirm list can't be flooded.
+- **Clear "nothing changed" errors**: when the database blocks a change,
+  the app still says it worked. Treat "0 rows changed" as an error.
+- **Tidy up**: remove the unused login illustration, the empty
+  `public/images/` folder (unless a hero photo is added) and
+  `supabase/sql/001-example.sql`.
+
 ## Cut from the spec (/to-spec)
 
 - **Separate due for each month**: each month gets its own editable
