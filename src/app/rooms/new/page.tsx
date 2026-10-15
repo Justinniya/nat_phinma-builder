@@ -21,9 +21,9 @@ export default async function NewRoomPage({ searchParams }: PageProps<"/rooms/ne
 
   return (
     <>
-      <TopBar email={user.email} />
+      <TopBar email={user.email} active="rooms" />
       <PageContainer>
-        <PageHeader back={{ href: "/", label: "Dashboard" }} title="Add a room" />
+        <PageHeader back={{ href: "/rooms", label: "Rooms" }} title="Add a room" />
         <TwoColumn
           main={
             <Card>

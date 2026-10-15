@@ -86,7 +86,8 @@ export async function deleteRoom(id: string) {
   if (error) redirect(`/rooms/${id}/edit?error=${encodeURIComponent(error.message)}`);
 
   revalidatePath("/");
-  redirect("/");
+  revalidatePath("/rooms");
+  redirect("/rooms");
 }
 
 export async function deleteRoomPhoto(roomId: string, path: string) {

@@ -111,7 +111,7 @@ export function RoomForm({
       {error && <Notice tone="error">{error}</Notice>}
 
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-        <Link href={room ? `/rooms/${room.id}` : "/"} className={buttonVariants({ variant: "outline" })}>
+        <Link href={room ? `/rooms/${room.id}` : "/rooms"} className={buttonVariants({ variant: "outline" })}>
           Cancel
         </Link>
         <Button type="submit">{submitLabel}</Button>

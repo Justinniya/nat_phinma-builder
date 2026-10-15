@@ -17,17 +17,17 @@ function readCredentials(formData: FormData) {
 export async function login(formData: FormData) {
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(readCredentials(formData));
-  if (error) redirect(`/login?error=${encodeURIComponent(error.message)}#login`);
+  if (error) redirect(`/login?error=${encodeURIComponent(error.message)}`);
   redirect("/");
 }
 
 export async function signup(formData: FormData) {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp(readCredentials(formData));
-  if (error) redirect(`/login?error=${encodeURIComponent(error.message)}#login`);
+  if (error) redirect(`/login?error=${encodeURIComponent(error.message)}`);
   // When "Confirm email" is ON, there is no session until the email link is clicked.
   if (!data.session) {
-    redirect(`/login?message=${encodeURIComponent("Check your email to confirm your account, then log in.")}#login`);
+    redirect(`/login?message=${encodeURIComponent("Check your email to confirm your account, then log in.")}`);
   }
   redirect("/");
 }

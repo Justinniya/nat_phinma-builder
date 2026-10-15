@@ -37,7 +37,7 @@ export default async function RecordPaymentPage({ params, searchParams }: PagePr
 
   return (
     <>
-      <TopBar email={user.email} />
+      <TopBar email={user.email} active="rooms" />
       <PageContainer>
         <PageHeader
           back={{ href: `/rooms/${room.id}`, label: room.label }}

@@ -43,10 +43,10 @@ export default async function RoomPage({ params, searchParams }: PageProps<"/roo
 
   return (
     <>
-      <TopBar email={user.email} />
+      <TopBar email={user.email} active="rooms" />
       <PageContainer>
         <PageHeader
-          back={{ href: "/", label: "Dashboard" }}
+          back={{ href: "/rooms", label: "Rooms" }}
           title={room.label}
           badge={<RoomStatusBadge status={due.status} />}
           description={room.boarder_first_name ? `Rented by ${room.boarder_first_name}` : "Vacant"}

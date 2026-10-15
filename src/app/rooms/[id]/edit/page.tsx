@@ -33,7 +33,7 @@ export default async function EditRoomPage({ params, searchParams }: PageProps<"
 
   return (
     <>
-      <TopBar email={user.email} />
+      <TopBar email={user.email} active="rooms" />
       <PageContainer>
         <PageHeader
           back={{ href: `/rooms/${room.id}`, label: room.label }}
