@@ -1,66 +1,146 @@
-import { Banknote, CalendarDays, House, NotebookPen } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import {
+  BadgeCheck,
+  CalendarCheck,
+  CalendarDays,
+  Camera,
+  ChevronDown,
+  History,
+  House,
+  Lock,
+  Send,
+  type LucideIcon,
+} from "lucide-react";
+import Link from "next/link";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { BoardingHouseIllustration } from "@/components/illustrations";
 import { login, signup } from "./actions";
 
-const highlights = [
-  { icon: CalendarDays, text: "See who has paid, who is due soon and who is overdue — on one screen." },
-  { icon: Banknote, text: "Record cash or GCash payments in a few taps." },
-  { icon: NotebookPen, text: "Look up any room's history without flipping through a notebook." },
-];
+// The landing page for logged-out visitors: what the app does, then the
+// log-in form at the bottom (#login).
+
+type Feature = { icon: LucideIcon; title: string; text: string };
+
+const audiences = {
+  landlords: {
+    tab: "For landlords",
+    heading: "Run your boarding house with less stress",
+    features: [
+      { icon: CalendarCheck, title: "Status at a glance", text: "Every room marked paid, due soon or overdue." },
+      { icon: BadgeCheck, title: "Confirm payments", text: "Boarders report a payment; you confirm when the money is in your hand." },
+      { icon: History, title: "Payment history", text: "Answer “did I pay in August?” in seconds." },
+      { icon: Camera, title: "Room photos", text: "Keep photos of each room in one place." },
+    ] satisfies Feature[],
+  },
+  boarders: {
+    tab: "For boarders",
+    heading: "Know exactly where you stand",
+    features: [
+      { icon: CalendarDays, title: "Your due date", text: "See when rent is due and how much." },
+      { icon: Send, title: "Report “I paid”", text: "Paid in cash or GCash? Let your landlord know in a few taps." },
+      { icon: History, title: "Your history", text: "Every payment, with your landlord's confirmation." },
+      { icon: Lock, title: "Private to you", text: "You only ever see your own room." },
+    ] satisfies Feature[],
+  },
+};
+
+type Audience = keyof typeof audiences;
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
-  const { error, message } = await searchParams;
+  const { error, message, for: forParam } = await searchParams;
+  const audience: Audience = forParam === "boarders" ? "boarders" : "landlords";
+  const current = audiences[audience];
 
   return (
-    <main className="grid w-full flex-1 grid-cols-1 lg:grid-cols-2">
-      {/* Left: midnight-blue brand panel. On phones it becomes a short header. */}
-      <section className="relative isolate flex flex-col justify-between gap-8 overflow-hidden bg-brand px-6 py-8 text-brand-foreground sm:px-10 lg:px-16 lg:py-12">
-        {/* Two faint circles for depth — purely decorative. */}
-        <div aria-hidden className="absolute -right-24 -top-24 -z-10 h-80 w-80 rounded-full bg-white/5" />
-        <div aria-hidden className="absolute -bottom-32 -left-20 -z-10 h-96 w-96 rounded-full bg-blue-400/10" />
-
-        <div className="flex items-center gap-2.5 font-semibold">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15">
-            <House className="h-4 w-4" aria-hidden />
+    <div className="flex w-full flex-1 flex-col bg-card">
+      {/* 1. Slim header with a thin brand line underneath */}
+      <header className="border-b-2 border-brand bg-card">
+        <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
+          <span className="flex items-center gap-2 font-semibold text-brand dark:text-foreground">
+            <House className="h-5 w-5" aria-hidden />
+            Rent Ledger
           </span>
-          Rent Ledger
+          <Link
+            href="#login"
+            className={buttonVariants({
+              variant: "outline",
+              size: "sm",
+              className: "border-brand text-brand hover:bg-brand hover:text-brand-foreground dark:border-primary dark:text-primary",
+            })}
+          >
+            Log in
+          </Link>
         </div>
+      </header>
 
-        <div className="hidden flex-col gap-8 lg:flex">
-          <BoardingHouseIllustration className="w-full max-w-sm" />
-          <div className="flex flex-col gap-3">
-            <h2 className="text-3xl font-semibold tracking-tight">
-              Every rent payment, in one place.
-            </h2>
-            <p className="max-w-md text-white/80">
-              No more cross-checking the notebook, GCash screenshots and Messenger chats.
-            </p>
-          </div>
-          <ul className="flex flex-col gap-4">
-            {highlights.map(({ icon: Icon, text }) => (
-              <li key={text} className="flex items-center gap-3 text-white/90">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/15">
-                  <Icon className="h-4 w-4" aria-hidden />
-                </span>
-                <span className="text-sm">{text}</span>
-              </li>
-            ))}
-          </ul>
+      {/* 2. Hero with a V-shaped bottom edge. If public/images/hero.jpg
+             exists it shows behind a dark tint; otherwise it's plain
+             midnight blue. */}
+      <section
+        className="relative bg-brand bg-cover bg-center text-brand-foreground [clip-path:polygon(0_0,100%_0,100%_82%,50%_100%,0_82%)]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(25, 25, 112, 0.72), rgba(25, 25, 112, 0.88)), url('/images/hero.jpg')",
+        }}
+      >
+        <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 pb-32 pt-20 text-center sm:pb-40 sm:pt-28">
+          <h1 className="text-3xl font-light tracking-tight sm:text-5xl">
+            Know who has paid — at a glance
+          </h1>
+          <p className="max-w-xl text-white/80">
+            The notebook, the GCash screenshots and the Messenger chats, replaced by one simple rent ledger.
+          </p>
+          <Link href="#login" className={buttonVariants({ size: "lg", className: "bg-primary px-8" })}>
+            Get started
+          </Link>
+          <p className="text-xs text-white/60">Free for boarding houses. Works on any phone.</p>
         </div>
-
-        <p className="hidden text-sm text-white/60 lg:block">For boarding house landlords and boarders.</p>
       </section>
 
-      {/* Right: the login form. */}
-      <section className="flex items-center justify-center bg-card px-6 py-12 sm:px-10">
-        <div className="flex w-full max-w-sm flex-col gap-8">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight text-brand dark:text-foreground">
+      {/* 3. Tabs: who is this for? (Plain links, so no JavaScript needed.) */}
+      <nav className="mx-auto -mt-4 flex w-full max-w-4xl justify-center gap-8 border-b border-border px-4" id="features">
+        {(Object.keys(audiences) as Audience[]).map((key) => (
+          <Link
+            key={key}
+            href={`?for=${key}#features`}
+            scroll={false}
+            className={`-mb-px border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
+              key === audience
+                ? "border-primary text-primary"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {audiences[key].tab}
+          </Link>
+        ))}
+      </nav>
+
+      {/* 4. Heading with a short gold accent line, then 5. four features */}
+      <section className="mx-auto flex w-full max-w-6xl flex-col items-center gap-14 px-4 py-16 sm:px-6">
+        <div className="flex flex-col items-center gap-8">
+          <h2 className="text-center text-2xl font-light tracking-tight sm:text-4xl">{current.heading}</h2>
+          <span className="h-0.5 w-16 bg-gold" aria-hidden />
+        </div>
+
+        <ul className="grid w-full grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          {current.features.map(({ icon: Icon, title, text }) => (
+            <li key={title} className="flex flex-col items-center gap-3 text-center">
+              <ChevronDown className="h-5 w-5 text-muted-foreground/50" aria-hidden />
+              <Icon className="h-6 w-6 text-gold" aria-hidden />
+              <h3 className="font-semibold text-primary">{title}</h3>
+              <p className="max-w-xs text-sm text-muted-foreground">{text}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Log-in form */}
+      <section id="login" className="border-t border-border bg-page px-4 py-16 sm:px-6">
+        <div className="panel mx-auto flex w-full max-w-sm flex-col gap-6 rounded-[var(--radius)] p-8">
+          <div className="flex flex-col gap-2 text-center">
+            <h2 className="text-2xl font-semibold tracking-tight text-brand dark:text-foreground">
               Log in to your account
-            </h1>
+            </h2>
             <p className="text-sm text-muted-foreground">
               New here? Enter your email and a password, then choose Sign up.
             </p>
@@ -103,6 +183,10 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
           </form>
         </div>
       </section>
-    </main>
+
+      <footer className="border-t border-border px-4 py-6 text-center text-xs text-muted-foreground">
+        Rent Ledger · Built at the PHINMA AI Builder Workshop
+      </footer>
+    </div>
   );
 }

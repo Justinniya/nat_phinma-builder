@@ -6,7 +6,7 @@ import { logout } from "./login/actions";
 // The white bar across the top of every logged-in screen.
 export function TopBar({ email }: { email: string | undefined }) {
   return (
-    <header className="sticky top-0 z-10 border-b border-border bg-card">
+    <header className="sticky top-0 z-10 border-b-2 border-brand bg-card dark:border-primary">
       <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-10">
         <Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
