@@ -50,30 +50,40 @@ function Choice<T extends string>({
   );
 }
 
+// Used by Mama Lita ("Record payment") and by boarders ("I paid").
+// Boarders can only report monthly payments, so they get monthlyOnly.
 export function PaymentForm({
   action,
-  roomId,
+  cancelHref,
   defaultAmount,
   today,
   thisMonth,
   error,
+  monthlyOnly = false,
+  submitLabel = "Save payment",
 }: {
   action: (formData: FormData) => Promise<void>;
-  roomId: string;
+  cancelHref: string;
   defaultAmount: number;
   today: string; // "2026-10-15"
   thisMonth: string; // "2026-10"
   error?: string;
+  monthlyOnly?: boolean;
+  submitLabel?: string;
 }) {
   const [type, setType] = useState<PaymentType>("monthly");
   const [method, setMethod] = useState<PaymentMethod>("cash");
 
   return (
     <form action={action} className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <Label>What is it for?</Label>
-        <Choice name="type" options={["monthly", "deposit", "advance"]} labels={typeLabel} value={type} onChange={setType} />
-      </div>
+      {monthlyOnly ? (
+        <input type="hidden" name="type" value="monthly" />
+      ) : (
+        <div className="flex flex-col gap-2">
+          <Label>What is it for?</Label>
+          <Choice name="type" options={["monthly", "deposit", "advance"]} labels={typeLabel} value={type} onChange={setType} />
+        </div>
+      )}
 
       {type === "monthly" && (
         <div className="flex flex-col gap-2">
@@ -127,9 +137,9 @@ export function PaymentForm({
 
       <div className="flex gap-3">
         <Button type="submit" size="lg" className="flex-1">
-          Save payment
+          {submitLabel}
         </Button>
-        <Link href={`/rooms/${roomId}`} className={buttonVariants({ variant: "outline", size: "lg" })}>
+        <Link href={cancelHref} className={buttonVariants({ variant: "outline", size: "lg" })}>
           Cancel
         </Link>
       </div>

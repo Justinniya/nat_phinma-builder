@@ -18,6 +18,8 @@ import {
   type Room,
   type RoomStatus,
 } from "@/lib/rooms";
+import { findMyRoom } from "@/lib/my-room";
+import { BoarderHome } from "./boarder-home";
 import { TopBar } from "./top-bar";
 
 // Mama Lita's dashboard: every room as a card, with its photo, who rents
@@ -25,10 +27,18 @@ import { TopBar } from "./top-bar";
 
 const statusOrder: RoomStatus[] = ["overdue", "due_soon", "upcoming", "paid", "vacant"];
 
-export default async function Dashboard() {
+export default async function Dashboard({ searchParams }: PageProps<"/">) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
+
+  // Is this person a boarder? (Their email is saved on a room.) Then they
+  // see their own room instead of the landlord dashboard.
+  const myRoom = await findMyRoom(supabase, user.email);
+  if (myRoom) {
+    const { reported } = await searchParams;
+    return <BoarderHome email={user.email} room={myRoom} reported={Boolean(reported)} />;
+  }
 
   // Only rooms this landlord owns. (Row Level Security enforces this too.)
   const { data, error } = await supabase

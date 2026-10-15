@@ -1,19 +1,18 @@
-import { Banknote, CalendarDays, Mail, Pencil, Plus, Trash2, User } from "lucide-react";
+import { Banknote, CalendarDays, Mail, Pencil, Plus, User } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { buttonVariants } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { PaymentHistory } from "@/components/payment-history";
 import { RoomIllustration } from "@/components/illustrations";
-import { methodLabel, PAYMENT_COLUMNS, statusLabel, typeLabel, type Payment } from "@/lib/payments";
+import { PAYMENT_COLUMNS, type Payment } from "@/lib/payments";
 import { listRoomPhotos } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
 import {
   dueDateToShow,
   formatDate,
-  formatPeriod,
   formatPesos,
   ordinal,
-  parseDate,
   periodOf,
   roomStatus,
   roomStatusStyle,
@@ -21,7 +20,6 @@ import {
   type Room,
 } from "@/lib/rooms";
 import { TopBar } from "../../top-bar";
-import { deletePayment } from "./pay/actions";
 
 // One room: its details, this month's status, and every payment ever
 // recorded for it — so "did I pay in August?" takes seconds to answer.
@@ -149,66 +147,11 @@ export default async function RoomPage({ params, searchParams }: PageProps<"/roo
           </Card>
 
           {/* Right: payment history */}
-          <Card className="h-fit">
-            <CardHeader className="flex-row items-center justify-between">
-              <CardTitle>Payment history</CardTitle>
-              <span className="text-sm text-muted-foreground">
-                {payments.length} {payments.length === 1 ? "payment" : "payments"}
-              </span>
-            </CardHeader>
-            <CardContent className="p-0">
-              {payments.length === 0 ? (
-                <p className="px-6 pb-8 text-sm text-muted-foreground">
-                  No payments yet. Tap “Record payment” when {room.boarder_first_name ?? "the boarder"} pays.
-                </p>
-              ) : (
-                <ul className="divide-y divide-border border-t border-border">
-                  {payments.map((p) => (
-                    <li key={p.id} className="flex flex-col gap-2 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="flex flex-col gap-1">
-                        <p className="font-medium">
-                          {p.type === "monthly" && p.period ? formatPeriod(p.period) : typeLabel[p.type]}
-                          {p.type === "monthly" && (
-                            <span className="font-normal text-muted-foreground"> · Monthly</span>
-                          )}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Paid {formatDate(parseDate(p.paid_on))} · {methodLabel[p.method]}
-                          {p.reference_no ? ` · Ref ${p.reference_no}` : ""}
-                          {p.received_by ? ` · Received by ${p.received_by}` : ""}
-                        </p>
-                        {p.status === "rejected" && p.reject_reason && (
-                          <p className="text-sm text-red-700 dark:text-red-400">Rejected: {p.reject_reason}</p>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-3 sm:justify-end">
-                        <span className="font-semibold tabular-nums">{formatPesos(p.amount)}</span>
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-0.5 text-xs font-medium">
-                          <span className={`h-1.5 w-1.5 rounded-full ${statusLabel[p.status].dot}`} />
-                          {statusLabel[p.status].label}
-                        </span>
-                        {/* Remove a mistake. Hidden behind a second tap. */}
-                        <details className="relative">
-                          <summary className="cursor-pointer list-none rounded-md p-1.5 text-muted-foreground hover:bg-secondary hover:text-destructive" aria-label="Remove payment">
-                            <Trash2 className="h-4 w-4" aria-hidden />
-                          </summary>
-                          <form
-                            action={deletePayment.bind(null, room.id, p.id)}
-                            className="panel absolute right-0 z-10 mt-2 flex w-56 flex-col gap-2 rounded-lg p-3"
-                          >
-                            <p className="text-xs text-muted-foreground">Remove this payment? Only do this if it was entered by mistake.</p>
-                            <Button type="submit" variant="destructive" size="sm">
-                              Yes, remove it
-                            </Button>
-                          </form>
-                        </details>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </CardContent>
-          </Card>
+          <PaymentHistory
+            payments={payments}
+            removableForRoomId={room.id}
+            emptyText={`No payments yet. Tap “Record payment” when ${room.boarder_first_name ?? "the boarder"} pays.`}
+          />
         </div>
       </main>
     </>

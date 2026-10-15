@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { formatPesos, isoDate, periodOf, todayInManila, type Room } from "@/lib/rooms";
 import { TopBar } from "../../../top-bar";
 import { recordPayment } from "./actions";
-import { PaymentForm } from "./payment-form";
+import { PaymentForm } from "@/components/payment-form";
 
 export default async function RecordPaymentPage({ params, searchParams }: PageProps<"/rooms/[id]/pay">) {
   const { id } = await params;
@@ -49,7 +49,7 @@ export default async function RecordPaymentPage({ params, searchParams }: PagePr
           <CardContent className="pt-6">
             <PaymentForm
               action={recordPayment.bind(null, room.id)}
-              roomId={room.id}
+              cancelHref={`/rooms/${room.id}`}
               defaultAmount={room.monthly_amount}
               today={isoDate(today)}
               thisMonth={periodOf(today).slice(0, 7)}
