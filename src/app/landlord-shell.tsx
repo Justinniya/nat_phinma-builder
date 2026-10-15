@@ -1,12 +1,13 @@
 import { BedDouble, LayoutDashboard, Wallet } from "lucide-react";
 import Link from "next/link";
+import { getLandlordName, LANDLORD_ROLE } from "@/lib/my-room";
 import { createClient } from "@/lib/supabase/server";
 import { Shell } from "./shell";
 
 // The frame around every one of Mama Lita's screens: the sidebar menu
-// (Dashboard, Rooms, Payments), her list of renters, and who's logged in.
+// (Dashboard, Rooms, Payments), her list of renters, and her name + role.
 
-export type LandlordSection = "dashboard" | "rooms" | "payments";
+export type LandlordSection = "dashboard" | "rooms" | "payments" | "profile";
 
 export async function LandlordShell({
   userId,
@@ -36,6 +37,8 @@ export async function LandlordShell({
   const rooms = (data ?? []).sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }));
   const renters = rooms.filter((r) => r.boarder_first_name);
   const vacant = rooms.length - renters.length;
+
+  const name = await getLandlordName(supabase, userId);
 
   const sidePanel = (
     <div className="flex flex-col gap-2">
@@ -73,7 +76,11 @@ export async function LandlordShell({
         { key: "rooms", href: "/rooms", label: "Rooms", icon: BedDouble },
         { key: "payments", href: "/payments", label: "Payments", icon: Wallet, badge: count ?? 0 },
       ]}
-      profile={{ title: "Landlord", subtitle: email }}
+      profile={{
+        title: name ?? "Add your name",
+        subtitle: name ? LANDLORD_ROLE : `${LANDLORD_ROLE} · ${email ?? ""}`,
+        href: "/profile",
+      }}
       sidePanel={sidePanel}
     >
       {children}

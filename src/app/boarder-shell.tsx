@@ -21,7 +21,7 @@ export function BoarderShell({
         { key: "room", href: "/", label: "My room", icon: DoorOpen },
         { key: "i-paid", href: "/i-paid", label: "I paid", icon: Send },
       ]}
-      profile={{ title: room.boarder_first_name ?? "Boarder", subtitle: room.label }}
+      profile={{ title: room.boarder_first_name ?? "Boarder", subtitle: `Boarder · ${room.label}` }}
     >
       {children}
     </Shell>

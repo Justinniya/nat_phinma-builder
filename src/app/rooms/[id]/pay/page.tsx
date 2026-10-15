@@ -3,6 +3,7 @@ import { PageContainer, PageHeader, TwoColumn } from "@/components/layout";
 import { PaymentForm } from "@/components/payment-form";
 import { RoomSummary } from "@/components/room-summary";
 import { Card, CardContent } from "@/components/ui/card";
+import { getLandlordName } from "@/lib/my-room";
 import { listRoomPhotos } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
 import { confirmedPeriods, isoDate, roomDue, ROOM_COLUMNS, todayInManila, type Room } from "@/lib/rooms";
@@ -34,6 +35,7 @@ export default async function RecordPaymentPage({ params, searchParams }: PagePr
   const today = todayInManila();
   const due = roomDue(room, today, confirmedPeriods(confirmed ?? []));
   const [cover] = await listRoomPhotos(supabase, user.id, room.id);
+  const landlordName = await getLandlordName(supabase, user.id);
 
   return (
     <LandlordShell userId={user.id} email={user.email} active="rooms">
@@ -54,6 +56,7 @@ export default async function RecordPaymentPage({ params, searchParams }: PagePr
                   today={isoDate(today)}
                   thisMonth={due.period.slice(0, 7)}
                   error={typeof error === "string" ? error : undefined}
+                  defaultReceivedBy={landlordName ?? ""}
                 />
               </CardContent>
             </Card>

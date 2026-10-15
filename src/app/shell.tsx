@@ -19,7 +19,7 @@ export function Shell({
 }: {
   links: ShellLink[];
   active: string;
-  profile: { title: string; subtitle?: string };
+  profile: { title: string; subtitle?: string; href?: string };
   sidePanel?: React.ReactNode; // e.g. the landlord's list of renters
   children: React.ReactNode;
 }) {
@@ -67,6 +67,19 @@ export function Shell({
   // Initials for the round avatar, e.g. "Juan" -> "J".
   const initial = profile.title.trim().charAt(0).toUpperCase() || "?";
 
+  // Avatar, name and role — e.g. "M  Mama Lita / Landlady · email".
+  const profileCard = (
+    <>
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/15 text-sm font-semibold text-white">
+        {initial}
+      </span>
+      <span className="min-w-0">
+        <span className="block truncate text-sm font-medium text-white">{profile.title}</span>
+        {profile.subtitle && <span className="block truncate text-xs text-white/55">{profile.subtitle}</span>}
+      </span>
+    </>
+  );
+
   return (
     <div className="flex w-full flex-1">
       {/* Laptop: sidebar */}
@@ -79,15 +92,21 @@ export function Shell({
         {sidePanel && <div className="mt-8 min-h-0 flex-1 overflow-y-auto">{sidePanel}</div>}
 
         <div className="mt-auto flex flex-col gap-2 border-t border-white/10 pt-4">
-          <div className="flex items-center gap-3 px-2">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/15 text-sm font-semibold text-white">
-              {initial}
-            </span>
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-white">{profile.title}</p>
-              {profile.subtitle && <p className="truncate text-xs text-white/55">{profile.subtitle}</p>}
-            </div>
-          </div>
+          {profile.href ? (
+            <Link
+              href={profile.href}
+              aria-current={active === "profile" ? "page" : undefined}
+              title="Edit your name"
+              className={cn(
+                "flex items-center gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-white/10",
+                active === "profile" && "bg-white/15",
+              )}
+            >
+              {profileCard}
+            </Link>
+          ) : (
+            <div className="flex items-center gap-3 px-2 py-1.5">{profileCard}</div>
+          )}
           {logoutButton}
         </div>
       </aside>

@@ -170,8 +170,11 @@ Photo files, private (no public links). Each photo is saved at
   screens. Anyone else sees "Your account isn't linked to a room yet".
 
 ### `landlords`
-One row per landlord account (`user_id`). A user may only check whether
-they themselves are on it. Nobody can add or remove rows from the app.
+One row per landlord account (`user_id`), with her `display_name`
+(shown in the sidebar as "Name · Landlady" and used as the default
+"Received by"). A user may read and rename only her own row; her
+boarders may read her name. Nobody can add or remove landlords from the
+app. (009)
 
 ### `payments.boarder_email`
 Filled in by the database when a payment is saved: the room's boarder

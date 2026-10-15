@@ -23,3 +23,13 @@ export async function isLandlord(supabase: SupabaseClient, userId: string) {
   const { data } = await supabase.from("landlords").select("user_id").eq("user_id", userId).limit(1);
   return (data?.length ?? 0) > 0;
 }
+
+// The landlord's display name (e.g. "Mama Lita"), or null if not set.
+// Readable by the landlord herself and by her own boarders (see 009).
+export async function getLandlordName(supabase: SupabaseClient, landlordId: string) {
+  const { data } = await supabase.from("landlords").select("display_name").eq("user_id", landlordId).limit(1);
+  return (data?.[0]?.display_name as string | null | undefined) ?? null;
+}
+
+// The word shown under a landlord's name in the sidebar.
+export const LANDLORD_ROLE = "Landlady";

@@ -3,7 +3,7 @@ import { PageContainer, PageHeader, TwoColumn } from "@/components/layout";
 import { PaymentForm } from "@/components/payment-form";
 import { RoomSummary } from "@/components/room-summary";
 import { Card, CardContent } from "@/components/ui/card";
-import { findMyRoom } from "@/lib/my-room";
+import { findMyRoom, getLandlordName } from "@/lib/my-room";
 import { listRoomPhotos } from "@/lib/room-photos";
 import { createClient } from "@/lib/supabase/server";
 import { confirmedPeriods, isoDate, roomDue, todayInManila } from "@/lib/rooms";
@@ -33,6 +33,7 @@ export default async function IPaidPage({ searchParams }: PageProps<"/i-paid">) 
     .eq("status", "confirmed");
   const due = roomDue(room, today, confirmedPeriods(confirmed ?? []));
   const [cover] = await listRoomPhotos(supabase, room.landlord_id, room.id);
+  const landlordName = await getLandlordName(supabase, room.landlord_id);
 
   return (
     <BoarderShell room={room} active="i-paid">
@@ -55,6 +56,7 @@ export default async function IPaidPage({ searchParams }: PageProps<"/i-paid">) 
                   error={typeof error === "string" ? error : undefined}
                   monthlyOnly
                   submitLabel="Send to landlord"
+                  defaultReceivedBy={landlordName ?? ""}
                 />
               </CardContent>
             </Card>

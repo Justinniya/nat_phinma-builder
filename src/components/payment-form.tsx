@@ -63,6 +63,7 @@ export function PaymentForm({
   error,
   monthlyOnly = false,
   submitLabel = "Save payment",
+  defaultReceivedBy = "",
 }: {
   action: (formData: FormData) => Promise<void>;
   cancelHref: string;
@@ -72,6 +73,7 @@ export function PaymentForm({
   error?: string;
   monthlyOnly?: boolean;
   submitLabel?: string;
+  defaultReceivedBy?: string; // the landlord's name, if she has set one
 }) {
   const [type, setType] = useState<PaymentType>("monthly");
   const [method, setMethod] = useState<PaymentMethod>("cash");
@@ -128,7 +130,7 @@ export function PaymentForm({
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="received_by">Received by</Label>
-        <Input id="received_by" name="received_by" defaultValue="Mama Lita" />
+        <Input id="received_by" name="received_by" defaultValue={defaultReceivedBy} placeholder="Who took the money?" />
       </div>
 
       {error && <Notice tone="error">{error}</Notice>}
