@@ -12,6 +12,8 @@ export function RoomCard({ item, photoUrl }: { item: RoomWithDue; photoUrl?: str
   return (
     <Link href={`/rooms/${room.id}`} className="group block">
       <Card className="flex h-full flex-col overflow-hidden transition-shadow duration-200 group-hover:shadow-md group-hover:ring-1 group-hover:ring-primary/30">
+        {/* Coloured bar: the room's status at a glance */}
+        <div className={`h-1.5 w-full ${roomStatusStyle[status].stripe}`} aria-hidden />
         <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-border bg-secondary">
           {photoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element -- private, short-lived photo links

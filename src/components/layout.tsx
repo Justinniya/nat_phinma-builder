@@ -125,10 +125,18 @@ function Badge({ dot, children, className }: { dot: string; children: React.Reac
 }
 
 export function RoomStatusBadge({ status, className }: { status: RoomStatus; className?: string }) {
+  const style = roomStatusStyle[status];
   return (
-    <Badge dot={roomStatusStyle[status].dot} className={className}>
-      {roomStatusStyle[status].label}
-    </Badge>
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-semibold",
+        style.badge,
+        className,
+      )}
+    >
+      <span className={cn("h-1.5 w-1.5 rounded-full", style.dot)} />
+      {style.label}
+    </span>
   );
 }
 

@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { loadLandlordRooms } from "@/lib/landlord-rooms";
 import { findMyRoom, isLandlord } from "@/lib/my-room";
 import { PAYMENT_COLUMNS } from "@/lib/payments";
-import { formatDate, formatPeriod, formatPesos, isoDate, roomStatusStyle, type RoomStatus } from "@/lib/rooms";
+import { formatDate, formatPeriod, formatPesos, isoDate, periodOf, roomStatusStyle, type RoomStatus } from "@/lib/rooms";
 import { createClient } from "@/lib/supabase/server";
 import { BoarderHome } from "./boarder-home";
 import { NotLinked } from "./not-linked";
@@ -49,6 +49,23 @@ export default async function Dashboard({ searchParams }: PageProps<"/">) {
 
   const { today, rooms, error } = await loadLandlordRooms(supabase, user.id);
 
+  // This month's money: rent expected from occupied rooms vs. rent
+  // actually confirmed for this month.
+  const thisPeriod = periodOf(today);
+  const { data: paidThisMonth } = await supabase
+    .from("payments")
+    .select("room_id, amount")
+    .eq("landlord_id", user.id)
+    .eq("type", "monthly")
+    .eq("status", "confirmed")
+    .eq("period", thisPeriod);
+  const occupied = rooms.filter((r) => r.room.boarder_email);
+  const expected = occupied.reduce((sum, r) => sum + Number(r.room.monthly_amount), 0);
+  const collected = (paidThisMonth ?? []).reduce((sum, p) => sum + Number(p.amount), 0);
+  const paidRoomIds = new Set((paidThisMonth ?? []).map((p) => p.room_id as string));
+  const roomsPaid = occupied.filter((r) => paidRoomIds.has(r.room.id)).length;
+  const percent = expected > 0 ? Math.min(100, Math.round((collected / expected) * 100)) : 0;
+
   // Overdue first, then due soon; earliest due date first within each.
   const attention = rooms
     .filter((r) => r.status === "overdue" || r.status === "due_soon")
@@ -75,14 +92,44 @@ export default async function Dashboard({ searchParams }: PageProps<"/">) {
         {typeof actionError === "string" && <Notice tone="error">{actionError}</Notice>}
         {error && <Notice tone="error">Could not load rooms: {error.message}</Notice>}
 
+        <Section title="This month">
+          <div className="panel flex flex-col gap-4 rounded-[var(--radius)] p-6">
+            <div className="flex flex-wrap items-end justify-between gap-2">
+              <div className="flex flex-col gap-1">
+                <span className="text-sm text-muted-foreground">{formatPeriod(thisPeriod)} rent collected</span>
+                <span className="text-3xl font-semibold tabular-nums tracking-tight">
+                  {formatPesos(collected)}
+                  <span className="text-base font-normal text-muted-foreground"> of {formatPesos(expected)}</span>
+                </span>
+              </div>
+              <span className="text-sm font-medium tabular-nums text-muted-foreground">{percent}%</span>
+            </div>
+            <div
+              className="h-2.5 w-full overflow-hidden rounded-full bg-secondary"
+              role="progressbar"
+              aria-valuenow={percent}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="Rent collected this month"
+            >
+              <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${percent}%` }} />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {roomsPaid} of {occupied.length} rented {occupied.length === 1 ? "room" : "rooms"} paid
+              {expected > collected && <> · <span className="font-medium text-foreground">{formatPesos(expected - collected)}</span> still to collect</>}
+            </p>
+          </div>
+        </Section>
+
         <Section title="Overview">
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             {statusOrder.map((status) => (
               <Link
                 key={status}
                 href={`/rooms?status=${status}`}
-                className="panel flex flex-col gap-2 rounded-[var(--radius)] p-5 transition-shadow hover:shadow-md hover:ring-1 hover:ring-primary/30"
+                className="panel relative flex flex-col gap-2 overflow-hidden rounded-[var(--radius)] p-5 pl-6 transition-shadow hover:shadow-md hover:ring-1 hover:ring-primary/30"
               >
+                <span className={`absolute inset-y-0 left-0 w-1.5 ${roomStatusStyle[status].stripe}`} aria-hidden />
                 <span className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                   <span className={`h-2 w-2 rounded-full ${roomStatusStyle[status].dot}`} />
                   {roomStatusStyle[status].label}

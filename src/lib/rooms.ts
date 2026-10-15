@@ -138,14 +138,47 @@ export function formatPesos(amount: number) {
   return `₱${Number(amount).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-// How each room status looks. Colours are kept to small dots so the page
-// stays calm and blue stays the main colour.
-export const roomStatusStyle: Record<RoomStatus, { label: string; dot: string; text: string }> = {
-  paid: { label: "Paid", dot: "bg-emerald-500", text: "text-emerald-700 dark:text-emerald-400" },
-  overdue: { label: "Overdue", dot: "bg-red-500", text: "text-red-700 dark:text-red-400" },
-  due_soon: { label: "Due soon", dot: "bg-amber-500", text: "text-amber-700 dark:text-amber-400" },
-  upcoming: { label: "Upcoming", dot: "bg-blue-500", text: "text-blue-700 dark:text-blue-400" },
-  vacant: { label: "Vacant", dot: "bg-slate-400", text: "text-slate-600 dark:text-slate-400" },
+// How each room status looks:
+//   dot    — small coloured dot (counters, filter tabs)
+//   text   — coloured text (due dates)
+//   badge  — tinted pill, easy to read at a glance
+//   stripe — the coloured bar along the top of a room card
+export const roomStatusStyle: Record<RoomStatus, { label: string; dot: string; text: string; badge: string; stripe: string }> = {
+  paid: {
+    label: "Paid",
+    dot: "bg-emerald-500",
+    text: "text-emerald-700 dark:text-emerald-400",
+    badge: "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-300",
+    stripe: "bg-emerald-500",
+  },
+  overdue: {
+    label: "Overdue",
+    dot: "bg-red-500",
+    text: "text-red-700 dark:text-red-400",
+    badge: "border-red-200 bg-red-50 text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-300",
+    stripe: "bg-red-500",
+  },
+  due_soon: {
+    label: "Due soon",
+    dot: "bg-amber-500",
+    text: "text-amber-700 dark:text-amber-400",
+    badge: "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-300",
+    stripe: "bg-amber-400",
+  },
+  upcoming: {
+    label: "Upcoming",
+    dot: "bg-blue-500",
+    text: "text-blue-700 dark:text-blue-400",
+    badge: "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-300",
+    stripe: "bg-blue-500",
+  },
+  vacant: {
+    label: "Vacant",
+    dot: "bg-slate-400",
+    text: "text-slate-600 dark:text-slate-400",
+    badge: "border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300",
+    stripe: "bg-slate-300 dark:bg-slate-700",
+  },
 };
 
 export function ordinal(n: number) {

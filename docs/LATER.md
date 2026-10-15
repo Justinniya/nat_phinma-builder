@@ -7,9 +7,6 @@ stays small enough to actually ship by Session 3.
 
 ## From /code-review (small polish, none block the demo)
 
-- **Bigger status colours**: room cards show Paid / Due soon / Overdue
-  as a small dot; a coloured badge or card edge would be easier to see
-  at a glance.
 - **Hide the room note from boarders**: the screen doesn't show it, but
   a boarder can read Mama Lita's private note through the database.
   Move notes to a landlord-only table, or treat notes as not private.
@@ -20,6 +17,13 @@ stays small enough to actually ship by Session 3.
   the app still says it worked. Treat "0 rows changed" as an error.
 - **Tidy up**: remove `supabase/sql/001-example.sql` (the unused
   illustration and empty images folder are already gone).
+
+## Feature ideas (after the first real payment cycle)
+
+- **Search on the Payments page**: type a room or name to jump to it.
+- **Move-out**: mark a boarder as moved out (history kept), leaving the
+  room vacant and clean for the next boarder.
+- **Export payments to a spreadsheet**: for Mama Lita's own records.
 
 ## Cut from the spec (/to-spec)
 
